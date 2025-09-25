@@ -1,4 +1,4 @@
-import quizIllustration from '@assets/generated_images/Quiz_competition_educational_illustration_207650fd.png';
+import eventBanner from '../../attached_assets/Ex-Cap Quiz Fest.jpg';
 
 export default function About() {
   return (
@@ -13,26 +13,26 @@ export default function About() {
             
             <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
               <p data-testid="text-about-description">
-                Ex-Cap Quiz Fest 2025 brings together the brightest minds from universities across the region for an intellectually stimulating competition that celebrates academic excellence and knowledge sharing.
+                <strong>Ex-Cap Quiz Fest 2025</strong> - The arena of quizzes, the battlefield of minds. If you want to be the champion of this battlefield, join us for this extraordinary competition presented by Edutune.
               </p>
               
               <p>
-                This prestigious event features multiple rounds of challenging questions spanning various disciplines, from science and technology to arts and humanities, designed to test participants' breadth of knowledge and quick thinking abilities.
+                The Ex-Cap Alumni Association of Savar Cantonment Public School & College is organizing "Ex-Cap Quiz Fest 2025". This quiz competition provides students with a unique opportunity to test their knowledge and intellectual capabilities across multiple disciplines.
               </p>
               
               <p>
-                Join us for an unforgettable experience where learning meets competition, networking opportunities abound, and the next generation of leaders showcase their intellectual prowess.
+                This will be an excellent platform for intellectual development, where students from elementary to higher secondary levels can showcase their knowledge, intelligence, and creativity in a competitive yet enriching environment.
               </p>
             </div>
           </div>
 
-          {/* Illustration */}
+          {/* Event Banner */}
           <div className="relative lg:pl-8">
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-primary opacity-20 blur-xl rounded-2xl" />
               <img
-                src={quizIllustration}
-                alt="Students participating in quiz competition"
+                src={eventBanner}
+                alt="Ex-Cap Quiz Fest 2025 Event Banner"
                 className="relative w-full h-auto rounded-2xl shadow-lg"
                 data-testid="img-about-illustration"
               />

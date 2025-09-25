@@ -6,20 +6,20 @@ export default function EventDetails() {
     {
       icon: Calendar,
       title: "Date",
-      value: "March 15, 2025",
-      subtitle: "Saturday"
+      value: "October 14, 2025",
+      subtitle: "Tuesday"
     },
     {
       icon: Clock,
       title: "Time",
-      value: "10:00 AM - 6:00 PM",
-      subtitle: "Full day event"
+      value: "10:45 AM - 2:30 PM",
+      subtitle: "School: 10:45 AM - 2:30 PM | College: 10:45 AM - 2:00 PM"
     },
     {
       icon: MapPin,
       title: "Venue",
-      value: "University Auditorium",
-      subtitle: "Main Campus"
+      value: "Savar Cantonment Public School & College",
+      subtitle: "School Canteen & Parent Shed"
     }
   ];
 
