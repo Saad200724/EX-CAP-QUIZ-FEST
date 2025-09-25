@@ -19,7 +19,7 @@ export default function EventDetails() {
       icon: MapPin,
       title: "Venue",
       value: "Savar Cantonment Public School & College",
-      subtitle: "School Canteen & Parent Shed"
+      subtitle: ""
     }
   ];
 
