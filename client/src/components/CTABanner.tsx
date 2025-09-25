@@ -19,18 +19,7 @@ export default function CTABanner() {
           Don't miss this opportunity to compete with the best and showcase your intellectual abilities.
         </p>
 
-        <RegistrationForm 
-          triggerButton={
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-primary backdrop-blur-sm px-8 py-6 text-lg font-semibold" 
-              data-testid="button-register-cta"
-            >
-              Register Now
-            </Button>
-          }
-        />
+        <RegistrationForm />
       </div>
     </section>
   );
