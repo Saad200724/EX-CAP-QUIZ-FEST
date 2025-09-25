@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import scpscLogo from "@/assets/logos/scpsc-college-logo.png";
 import excapLogo from "@/assets/logos/excap-logo.png";
+import edutuneLogo from "@/assets/logos/edutune-logo.jpg";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,6 +57,12 @@ export default function Navbar() {
               alt="Ex-CAP Logo" 
               className="h-12 w-12 object-contain"
               data-testid="img-excap-logo"
+            />
+            <img 
+              src={edutuneLogo} 
+              alt="EduTune Logo" 
+              className="h-12 w-12 object-contain"
+              data-testid="img-edutune-logo"
             />
             <h1 className={`text-xl font-bold transition-colors ${
               isScrolled ? "text-gray-800" : "text-white"
