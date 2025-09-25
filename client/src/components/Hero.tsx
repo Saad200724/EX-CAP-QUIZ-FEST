@@ -30,7 +30,7 @@ export default function Hero() {
           
           {/* Memorial text */}
           <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
-            In remembrance of the martyred Students of SCPSC
+            In remembrance of the martyred students of SCPSC
           </p>
 
           {/* Registration and Timer at bottom */}
