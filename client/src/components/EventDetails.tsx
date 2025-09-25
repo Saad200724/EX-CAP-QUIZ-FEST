@@ -12,7 +12,7 @@ export default function EventDetails() {
     {
       icon: Clock,
       title: "Time",
-      value: "10:45 AM - 2:30 PM",
+      value: "Tiffin Period",
       subtitle: "School: 10:45 AM - 2:30 PM | College: 10:45 AM - 2:00 PM"
     },
     {
