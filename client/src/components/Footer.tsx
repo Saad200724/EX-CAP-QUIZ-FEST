@@ -122,12 +122,13 @@ export default function Footer() {
             <div className="flex flex-col sm:flex-row items-center gap-2 text-primary-foreground/60 text-sm" data-testid="text-footer-copyright">
               <span>© 2025 Ex-CAP Quiz. All rights reserved.</span>
               <div className="flex items-center gap-2">
-                <span>Developed by SCPSC Cyber Hub</span>
+                <span>Developed by</span>
                 <img 
                   src={chCyberHubLogo} 
                   alt="SCPSC Cyber Hub Logo" 
-                  className="h-6 w-6 object-contain"
+                  className="h-10 w-10 object-contain"
                 />
+                <span>(SCPSC Cyber Hub)</span>
               </div>
             </div>
             <div className="flex gap-6 text-sm">
