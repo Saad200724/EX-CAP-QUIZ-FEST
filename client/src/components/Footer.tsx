@@ -1,6 +1,7 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ContactForm from "./ContactForm";
+import chCyberHubLogo from "@/assets/logos/ch-cyber-hub-logo.png";
 
 export default function Footer() {
   const contactInfo = [
@@ -118,9 +119,17 @@ export default function Footer() {
         {/* Bottom Border */}
         <div className="border-t border-primary-foreground/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-primary-foreground/60 text-sm" data-testid="text-footer-copyright">
-              © 2025 Ex-CAP Quiz. All rights reserved. Developed by SCPSC Cyber Hub
-            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-2 text-primary-foreground/60 text-sm" data-testid="text-footer-copyright">
+              <span>© 2025 Ex-CAP Quiz. All rights reserved.</span>
+              <div className="flex items-center gap-2">
+                <span>Developed by SCPSC Cyber Hub</span>
+                <img 
+                  src={chCyberHubLogo} 
+                  alt="SCPSC Cyber Hub Logo" 
+                  className="h-6 w-6 object-contain"
+                />
+              </div>
+            </div>
             <div className="flex gap-6 text-sm">
               <button 
                 className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded"
