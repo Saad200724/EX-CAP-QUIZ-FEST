@@ -46,7 +46,7 @@ export default function Navbar() {
             <h1 className={`text-xl font-bold transition-colors ${
               isScrolled ? "text-gray-800" : "text-white"
             }`} data-testid="text-logo">
-              Ex-Cap Next
+              Ex-CAP Quiz Fest 2025
             </h1>
           </div>
 
