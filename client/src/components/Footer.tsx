@@ -54,17 +54,6 @@ export default function Footer() {
             <p className="text-primary-foreground/80 mb-6 leading-relaxed">
               Empowering the next generation of leaders through educational excellence and competitive learning experiences.
             </p>
-            <ContactForm 
-              triggerButton={
-                <Button 
-                  variant="outline" 
-                  className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary" 
-                  data-testid="button-footer-contact"
-                >
-                  Get in Touch
-                </Button>
-              }
-            />
           </div>
 
           {/* Contact Info */}
@@ -95,7 +84,7 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-6" data-testid="text-footer-social-title">
               Follow Us
             </h4>
-            <div className="flex gap-4">
+            <div className="flex gap-4 mb-6">
               {socialLinks.map((social, index) => {
                 const IconComponent = social.icon;
                 return (
@@ -111,6 +100,17 @@ export default function Footer() {
                 );
               })}
             </div>
+            <ContactForm 
+              triggerButton={
+                <Button 
+                  variant="outline" 
+                  className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary" 
+                  data-testid="button-footer-contact"
+                >
+                  Get in Touch
+                </Button>
+              }
+            />
           </div>
         </div>
 
