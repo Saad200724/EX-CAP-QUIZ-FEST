@@ -24,7 +24,7 @@ export default function CTABanner() {
             <Button 
               size="lg" 
               variant="outline" 
-              className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-700 border-white/20 text-white hover:from-purple-500 hover:via-pink-400 hover:to-purple-600 hover:scale-105 transition-all duration-300 backdrop-blur-sm px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl" 
+              className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-primary backdrop-blur-sm px-8 py-6 text-lg font-semibold" 
               data-testid="button-register-cta"
             >
               Register Now
