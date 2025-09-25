@@ -1,8 +1,11 @@
 
 import { BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 
 export default function CompetitionDetails() {
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+
   const categories = [
     {
       icon: BookOpen,
@@ -45,8 +48,18 @@ export default function CompetitionDetails() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {categories.map((category, index) => {
             const IconComponent = category.icon;
+            const isExpanded = expandedCard === index;
+            
             return (
-              <Card key={index} className="relative group hover-elevate transition-all duration-300 hover:shadow-lg border-0 bg-card/80 backdrop-blur overflow-hidden">
+              <Card 
+                key={index} 
+                className={`relative group hover-elevate transition-all duration-500 hover:shadow-lg border-0 bg-card/80 backdrop-blur overflow-hidden cursor-pointer ${
+                  isExpanded ? 'md:col-span-2 lg:col-span-1' : ''
+                }`}
+                onMouseEnter={() => setExpandedCard(index)}
+                onMouseLeave={() => setExpandedCard(null)}
+                onClick={() => setExpandedCard(isExpanded ? null : index)}
+              >
                 <div className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${category.color}`} />
                 
                 <CardHeader className="text-center pb-4">
@@ -58,12 +71,19 @@ export default function CompetitionDetails() {
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className="pt-0">
+                <CardContent 
+                  className={`pt-0 transition-all duration-500 overflow-hidden ${
+                    isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
                   <div className="space-y-2">
                     {category.subjects.map((subject, subIndex) => (
                       <div
                         key={subIndex}
-                        className="px-3 py-2 bg-muted rounded-lg text-sm font-medium text-muted-foreground text-center"
+                        className="px-3 py-2 bg-muted rounded-lg text-sm font-medium text-muted-foreground text-center transform transition-transform duration-300"
+                        style={{
+                          transitionDelay: `${subIndex * 50}ms`
+                        }}
                       >
                         {subject}
                       </div>
