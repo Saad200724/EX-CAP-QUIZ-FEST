@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import scpscLogo from "@/assets/logos/scpsc-college-logo.png";
+import excapLogo from "@/assets/logos/excap-logo.png";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,7 +44,19 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center gap-3">
+            <img 
+              src={scpscLogo} 
+              alt="SCPSC College Logo" 
+              className="h-12 w-12 object-contain"
+              data-testid="img-scpsc-logo"
+            />
+            <img 
+              src={excapLogo} 
+              alt="Ex-CAP Logo" 
+              className="h-12 w-12 object-contain"
+              data-testid="img-excap-logo"
+            />
             <h1 className={`text-xl font-bold transition-colors ${
               isScrolled ? "text-gray-800" : "text-white"
             }`} data-testid="text-logo">

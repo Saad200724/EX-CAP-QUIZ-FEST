@@ -1,5 +1,5 @@
 
-import { BookOpen, Trophy, Users, GraduationCap } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function CompetitionDetails() {
@@ -11,19 +11,19 @@ export default function CompetitionDetails() {
       color: "from-blue-500 to-cyan-500"
     },
     {
-      icon: Users,
+      icon: BookOpen,
       title: "Class 6-8", 
       subjects: ["General Knowledge", "Math", "History", "Entertainment", "Sports"],
       color: "from-green-500 to-emerald-500"
     },
     {
-      icon: Trophy,
+      icon: BookOpen,
       title: "Class 9-10",
       subjects: ["IQ", "General Knowledge", "Math", "History", "Entertainment", "Sports"],
       color: "from-orange-500 to-red-500"
     },
     {
-      icon: GraduationCap,
+      icon: BookOpen,
       title: "Class 11-12",
       subjects: ["IQ", "General Knowledge", "Math", "History", "Entertainment", "Sports"],
       color: "from-purple-500 to-pink-500"
