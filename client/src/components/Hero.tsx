@@ -14,9 +14,9 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="relative mb-6">
-            <span className="absolute top-0 right-0 text-white/70 text-lg md:text-xl font-normal" data-testid="text-hero-presenter">EduTune presents</span>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight pt-8">
-              <span className="flicker-animation" data-testid="text-hero-title">Ex-CAP Quiz Fest 2025</span>
+            <span className="absolute top-0 left-0 text-white/70 text-xl md:text-2xl font-normal" data-testid="text-hero-presenter">EduTune presents</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight pt-12">
+              <span className="flicker-animation whitespace-nowrap" data-testid="text-hero-title">Ex-CAP Quiz Fest 2025</span>
             </h1>
           </div>
           
