@@ -5,21 +5,21 @@ import ContactForm from "./ContactForm";
 export default function Footer() {
   const contactInfo = [
     {
-      icon: Mail,
-      label: "Email",
-      value: "info@excapnext.com",
-      href: "mailto:info@excapnext.com"
+      icon: Phone,
+      label: "Phone",
+      value: "01780184038",
+      href: "tel:01780184038"
     },
     {
       icon: Phone,
       label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567"
+      value: "01711988862",
+      href: "tel:01711988862"
     },
     {
       icon: MapPin,
       label: "Address",
-      value: "123 University Ave, Education City",
+      value: "Savar Cantonment Public School & College",
       href: "#"
     }
   ];
@@ -50,7 +50,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div>
             <h3 className="text-2xl font-bold mb-6" data-testid="text-footer-brand">
-              Ex-Cap Next
+              Ex-CAP Quiz Fest 2025
             </h3>
             <p className="text-primary-foreground/80 mb-6 leading-relaxed">
               Empowering the next generation of leaders through educational excellence and competitive learning experiences.
@@ -119,7 +119,7 @@ export default function Footer() {
         <div className="border-t border-primary-foreground/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-primary-foreground/60 text-sm" data-testid="text-footer-copyright">
-              © 2025 Ex-Cap Next. All rights reserved.
+              © 2025 Ex-CAP Quiz. All rights reserved. Developed by SCPSC Cyber Hub
             </p>
             <div className="flex gap-6 text-sm">
               <button 
