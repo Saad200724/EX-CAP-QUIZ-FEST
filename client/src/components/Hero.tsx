@@ -34,7 +34,7 @@ export default function Hero() {
           </p>
 
           {/* Registration and Timer at bottom */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-20">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-32 relative z-20">
             <RegistrationForm />
             <CountdownTimer />
           </div>
@@ -42,7 +42,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
     </section>
   );
 }
