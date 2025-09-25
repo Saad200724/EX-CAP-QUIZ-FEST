@@ -19,7 +19,7 @@ export default function Hero() {
             <img 
               src={quizLogo} 
               alt="Ex-CAP Quiz Fest 2025" 
-              className="mx-auto max-w-lg w-full h-auto flicker-animation"
+              className="mx-auto max-w-md w-full h-auto flicker-animation"
               data-testid="img-quiz-logo"
             />
           </div>
