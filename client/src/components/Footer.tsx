@@ -1,4 +1,6 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ContactForm from "./ContactForm";
 
 export default function Footer() {
   const contactInfo = [
@@ -53,6 +55,17 @@ export default function Footer() {
             <p className="text-primary-foreground/80 mb-6 leading-relaxed">
               Empowering the next generation of leaders through educational excellence and competitive learning experiences.
             </p>
+            <ContactForm 
+              triggerButton={
+                <Button 
+                  variant="outline" 
+                  className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary" 
+                  data-testid="button-footer-contact"
+                >
+                  Get in Touch
+                </Button>
+              }
+            />
           </div>
 
           {/* Contact Info */}

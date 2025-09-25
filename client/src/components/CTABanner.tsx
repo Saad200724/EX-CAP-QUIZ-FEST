@@ -1,12 +1,7 @@
+import RegistrationForm from "./RegistrationForm";
 import { Button } from "@/components/ui/button";
 
 export default function CTABanner() {
-  const handleRegisterClick = () => {
-    console.log("CTA Register button clicked");
-    // Open registration form or navigate to registration page
-    window.alert("Registration form would open here!");
-  };
-
   return (
     <section id="register" className="py-24 bg-gradient-diagonal relative overflow-hidden">
       {/* Background decorative elements */}
@@ -24,15 +19,18 @@ export default function CTABanner() {
           Don't miss this opportunity to compete with the best and showcase your intellectual abilities.
         </p>
 
-        <Button
-          size="lg"
-          variant="outline"
-          className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-primary backdrop-blur-sm px-8 py-6 text-lg font-semibold transition-all duration-300 hover:scale-105"
-          onClick={handleRegisterClick}
-          data-testid="button-register-cta"
-        >
-          Register Now
-        </Button>
+        <RegistrationForm 
+          triggerButton={
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-primary backdrop-blur-sm px-8 py-6 text-lg font-semibold" 
+              data-testid="button-register-cta"
+            >
+              Register Now
+            </Button>
+          }
+        />
       </div>
     </section>
   );

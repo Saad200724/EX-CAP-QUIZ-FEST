@@ -1,15 +1,6 @@
-import { Button } from "@/components/ui/button";
+import RegistrationForm from "./RegistrationForm";
 
 export default function Hero() {
-  const handleRegisterClick = () => {
-    console.log("Register button clicked");
-    // Scroll to register section or open registration form
-    const element = document.querySelector("#register");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-diagonal overflow-hidden">
       {/* Background decorative elements */}
@@ -32,14 +23,7 @@ export default function Hero() {
             Join the ultimate student competition and celebrate knowledge.
           </p>
 
-          <Button
-            size="lg"
-            className="bg-gradient-primary hover:opacity-90 text-white px-8 py-6 text-lg font-semibold shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-            onClick={handleRegisterClick}
-            data-testid="button-register-hero"
-          >
-            Register Now
-          </Button>
+          <RegistrationForm />
         </div>
       </div>
 

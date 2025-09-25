@@ -13,7 +13,7 @@ export const registrations = pgTable("registrations", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   university: text("university").notNull(),
   phone: text("phone"),
   teamName: text("team_name"),
