@@ -1,4 +1,4 @@
-import eventBanner from '../../attached_assets/Ex-Cap Quiz Fest.jpg';
+import eventBanner from '/attached_assets/Ex-Cap Quiz Fest.jpg';
 
 export default function About() {
   return (
