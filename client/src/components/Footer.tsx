@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ContactForm from "./ContactForm";
 import chCyberHubLogo from "@/assets/logos/ch-cyber-hub-logo.png";
@@ -26,10 +26,8 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" }
+    { icon: Facebook, href: "https://www.facebook.com/excap.scpsc", label: "Facebook" },
+    { icon: Instagram, href: "https://www.instagram.com/ex_cap_scpsc/", label: "Instagram" }
   ];
 
   const handleContactClick = (href: string, label: string) => {
@@ -41,7 +39,7 @@ export default function Footer() {
 
   const handleSocialClick = (href: string, label: string) => {
     console.log(`Social link clicked: ${label}`);
-    // In a real app, this would navigate to the actual social media page
+    window.open(href, '_blank', 'noopener,noreferrer');
   };
 
   return (
