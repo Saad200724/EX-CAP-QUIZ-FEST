@@ -13,10 +13,12 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            <span className="text-white/90 text-3xl md:text-4xl lg:text-5xl block mb-4" data-testid="text-hero-presenter">EduTune presents</span>
-            <span data-testid="text-hero-title">Ex Cap Quiz Fest 2025</span>
-          </h1>
+          <div className="relative mb-6">
+            <span className="absolute top-0 right-0 text-white/70 text-lg md:text-xl font-normal" data-testid="text-hero-presenter">EduTune presents</span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight pt-8">
+              <span className="flicker-animation" data-testid="text-hero-title">Ex-CAP Quiz Fest 2025</span>
+            </h1>
+          </div>
           
           <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
             In remembrance of the martyred Students of SCPSC
