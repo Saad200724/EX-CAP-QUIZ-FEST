@@ -14,8 +14,9 @@ export default function Hero() {
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative mb-6">
+        <div className="max-w-4xl mx-auto flex flex-col justify-center min-h-screen">
+          {/* Quiz Logo - positioned at top with spacing from header */}
+          <div className="relative mt-20 mb-8">
             <img 
               src={quizLogo} 
               alt="Ex-CAP Quiz Fest 2025" 
@@ -23,12 +24,17 @@ export default function Hero() {
               data-testid="img-quiz-logo"
             />
           </div>
+
+          {/* Spacer to push content down */}
+          <div className="flex-1"></div>
           
-          <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
+          {/* Memorial text */}
+          <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
             In remembrance of the martyred Students of SCPSC
           </p>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+          {/* Registration and Timer at bottom */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-20">
             <RegistrationForm />
             <CountdownTimer />
           </div>
