@@ -5,7 +5,7 @@ interface CountdownTimerProps {
   targetDate?: string;
 }
 
-export default function CountdownTimer({ targetDate = "2025-01-15T10:00:00Z" }: CountdownTimerProps) {
+export default function CountdownTimer({ targetDate = "2025-09-26T22:00:00+06:00" }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -38,7 +38,7 @@ export default function CountdownTimer({ targetDate = "2025-01-15T10:00:00Z" }: 
     <Card className="bg-white/10 backdrop-blur border-white/20" data-testid="countdown-timer">
       <CardContent className="p-4">
         <div className="text-center mb-2">
-          <p className="text-white/80 text-sm font-medium">Quiz Starts In</p>
+          <p className="text-white/80 text-sm font-medium">Online Registration Starts In</p>
         </div>
         <div className="grid grid-cols-4 gap-2 text-center">
           <div className="bg-white/20 rounded-lg p-2">
