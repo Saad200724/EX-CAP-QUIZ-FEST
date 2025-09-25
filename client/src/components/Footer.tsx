@@ -126,7 +126,7 @@ export default function Footer() {
                 <img 
                   src={chCyberHubLogo} 
                   alt="SCPSC Cyber Hub Logo" 
-                  className="h-10 w-10 object-contain"
+                  className="h-12 w-12 object-contain"
                 />
                 <span>(SCPSC Cyber Hub)</span>
               </div>
