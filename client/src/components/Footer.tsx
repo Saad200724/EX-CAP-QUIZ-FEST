@@ -84,33 +84,35 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-6" data-testid="text-footer-social-title">
               Follow Us
             </h4>
-            <div className="flex gap-4 mb-6">
-              {socialLinks.map((social, index) => {
-                const IconComponent = social.icon;
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleSocialClick(social.href, social.label)}
-                    className="w-12 h-12 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover-elevate"
-                    data-testid={`link-social-${social.label.toLowerCase()}`}
-                    aria-label={social.label}
+            <div className="flex items-center gap-6">
+              <div className="flex gap-4">
+                {socialLinks.map((social, index) => {
+                  const IconComponent = social.icon;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSocialClick(social.href, social.label)}
+                      className="w-12 h-12 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover-elevate"
+                      data-testid={`link-social-${social.label.toLowerCase()}`}
+                      aria-label={social.label}
+                    >
+                      <IconComponent className="w-6 h-6" />
+                    </button>
+                  );
+                })}
+              </div>
+              <ContactForm 
+                triggerButton={
+                  <Button 
+                    variant="outline" 
+                    className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary" 
+                    data-testid="button-footer-contact"
                   >
-                    <IconComponent className="w-6 h-6" />
-                  </button>
-                );
-              })}
+                    Get in Touch
+                  </Button>
+                }
+              />
             </div>
-            <ContactForm 
-              triggerButton={
-                <Button 
-                  variant="outline" 
-                  className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary" 
-                  data-testid="button-footer-contact"
-                >
-                  Get in Touch
-                </Button>
-              }
-            />
           </div>
         </div>
 
