@@ -43,31 +43,32 @@ export default function Navbar() {
         : "bg-[#73349c]"
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 sm:h-18">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-3">
+          <div className="flex-shrink-0 flex items-center gap-2 sm:gap-3">
             <img 
               src={scpscLogo} 
               alt="SCPSC College Logo" 
-              className="h-12 w-12 object-contain"
+              className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
               data-testid="img-scpsc-logo"
             />
             <img 
               src={excapLogo} 
               alt="Ex-CAP Logo" 
-              className="h-12 w-12 object-contain"
+              className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
               data-testid="img-excap-logo"
             />
             <img 
               src={edutuneLogo} 
               alt="EduTune Logo" 
-              className="h-12 w-12 object-contain"
+              className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
               data-testid="img-edutune-logo"
             />
-            <h1 className={`text-xl font-bold transition-colors ${
+            <h1 className={`text-sm sm:text-lg lg:text-xl font-bold transition-colors max-w-[120px] sm:max-w-none ${
               isScrolled ? "text-gray-800" : "text-white"
             }`} data-testid="text-logo">
-              Ex-CAP Quiz Fest 2025
+              <span className="hidden sm:inline">Ex-CAP Quiz Fest 2025</span>
+              <span className="sm:hidden leading-tight">Ex-CAP<br />Quiz</span>
             </h1>
           </div>
 
@@ -97,6 +98,7 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`p-2 ${isScrolled ? "text-gray-800" : "text-white"}`}
               data-testid="button-menu-toggle"
             >
               {isMenuOpen ? (
@@ -111,17 +113,17 @@ export default function Navbar() {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t ${
+            <div className={`px-4 pt-4 pb-6 space-y-2 border-t ${
               isScrolled ? "bg-white/95 backdrop-blur-md" : "bg-[#73349c]"
             }`}>
               {navItems.map((item) => (
                 <button
                   key={item.name}
                   onClick={() => handleNavClick(item.href)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors hover-elevate ${
+                  className={`block px-4 py-3 rounded-lg text-base font-medium w-full text-left transition-all duration-200 hover-elevate hover:scale-[1.02] ${
                     isScrolled 
-                      ? "text-gray-600 hover:text-gray-800" 
-                      : "text-white/90 hover:text-white"
+                      ? "text-gray-600 hover:text-gray-800 hover:bg-gray-50" 
+                      : "text-white/90 hover:text-white hover:bg-white/10"
                   }`}
                   data-testid={`link-mobile-${item.name.toLowerCase()}`}
                 >

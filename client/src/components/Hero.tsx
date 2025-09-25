@@ -7,36 +7,40 @@ export default function Hero() {
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-diagonal overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
-        <div className="absolute bottom-32 right-20 w-48 h-48 bg-white/5 rounded-full blur-2xl" />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-chart-2/20 rounded-full blur-lg" />
+        <div className="absolute top-16 left-4 sm:top-20 sm:left-10 w-20 h-20 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-xl" />
+        <div className="absolute bottom-20 right-4 sm:bottom-32 sm:right-20 w-32 h-32 sm:w-48 sm:h-48 bg-white/5 rounded-full blur-2xl" />
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 sm:w-24 sm:h-24 bg-chart-2/20 rounded-full blur-lg" />
       </div>
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto flex flex-col justify-center min-h-screen">
+        <div className="max-w-4xl mx-auto flex flex-col justify-center min-h-screen py-4">
           {/* Quiz Logo - positioned at top with spacing from header */}
-          <div className="relative mt-20 mb-8">
+          <div className="relative mt-16 sm:mt-20 mb-6 sm:mb-8">
             <img 
               src={quizLogo} 
               alt="Ex-CAP Quiz Fest 2025" 
-              className="mx-auto max-w-md w-full h-auto flicker-animation"
+              className="mx-auto max-w-[280px] sm:max-w-sm md:max-w-md w-full h-auto flicker-animation"
               data-testid="img-quiz-logo"
             />
           </div>
 
           {/* Spacer to push content down */}
-          <div className="flex-1"></div>
+          <div className="flex-1 min-h-[2rem]"></div>
           
           {/* Memorial text */}
-          <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
+          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4" data-testid="text-hero-subtitle">
             In remembrance of the martyred students of SCPSC
           </p>
 
           {/* Registration and Timer at bottom */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-32 relative z-20">
-            <RegistrationForm />
-            <CountdownTimer />
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16 sm:mb-24 md:mb-32 relative z-20 px-4">
+            <div className="w-full sm:w-auto">
+              <RegistrationForm />
+            </div>
+            <div className="w-full sm:w-auto max-w-sm">
+              <CountdownTimer />
+            </div>
           </div>
         </div>
       </div>

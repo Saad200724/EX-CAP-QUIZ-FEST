@@ -43,36 +43,36 @@ export default function Footer() {
   };
 
   return (
-    <footer id="contact" className="bg-primary text-primary-foreground py-16">
+    <footer id="contact" className="bg-primary text-primary-foreground py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
           {/* Brand Section */}
-          <div>
-            <h3 className="text-2xl font-bold mb-6" data-testid="text-footer-brand">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" data-testid="text-footer-brand">
               Ex-CAP Quiz Fest 2025
             </h3>
-            <p className="text-primary-foreground/80 mb-6 leading-relaxed">
+            <p className="text-primary-foreground/80 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
               Empowering the next generation of leaders through educational excellence and competitive learning experiences.
             </p>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-6" data-testid="text-footer-contact-title">
+            <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6" data-testid="text-footer-contact-title">
               Contact Information
             </h4>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {contactInfo.map((contact, index) => {
                 const IconComponent = contact.icon;
                 return (
                   <button
                     key={index}
                     onClick={() => handleContactClick(contact.href, contact.label)}
-                    className="flex items-center gap-3 text-primary-foreground/80 hover:text-primary-foreground transition-colors hover-elevate p-2 rounded-md text-left w-full"
+                    className="flex items-center gap-3 text-primary-foreground/80 hover:text-primary-foreground transition-colors hover-elevate p-2 rounded-md text-left w-full text-sm sm:text-base"
                     data-testid={`link-contact-${contact.label.toLowerCase()}`}
                   >
-                    <IconComponent className="w-5 h-5 flex-shrink-0" />
-                    <span>{contact.value}</span>
+                    <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                    <span className="break-words">{contact.value}</span>
                   </button>
                 );
               })}
@@ -80,23 +80,23 @@ export default function Footer() {
           </div>
 
           {/* Social Media */}
-          <div>
-            <h4 className="text-lg font-semibold mb-6" data-testid="text-footer-social-title">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6" data-testid="text-footer-social-title">
               Follow Us
             </h4>
-            <div className="flex items-center gap-6">
-              <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+              <div className="flex gap-3 sm:gap-4">
                 {socialLinks.map((social, index) => {
                   const IconComponent = social.icon;
                   return (
                     <button
                       key={index}
                       onClick={() => handleSocialClick(social.href, social.label)}
-                      className="w-12 h-12 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover-elevate"
+                      className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover-elevate"
                       data-testid={`link-social-${social.label.toLowerCase()}`}
                       aria-label={social.label}
                     >
-                      <IconComponent className="w-6 h-6" />
+                      <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                   );
                 })}
@@ -105,7 +105,8 @@ export default function Footer() {
                 triggerButton={
                   <Button 
                     variant="outline" 
-                    className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary" 
+                    size="sm"
+                    className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground hover:text-primary text-sm sm:text-base px-3 sm:px-4" 
                     data-testid="button-footer-contact"
                   >
                     Get in Touch
@@ -117,30 +118,30 @@ export default function Footer() {
         </div>
 
         {/* Bottom Border */}
-        <div className="border-t border-primary-foreground/20 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 text-primary-foreground/60 text-sm" data-testid="text-footer-copyright">
+        <div className="border-t border-primary-foreground/20 mt-8 sm:mt-12 pt-6 sm:pt-8">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-primary-foreground/60 text-xs sm:text-sm text-center sm:text-left" data-testid="text-footer-copyright">
               <span>© 2025 Ex-CAP Quiz. All rights reserved.</span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
                 <span>Developed by</span>
                 <img 
                   src={chCyberHubLogo} 
                   alt="SCPSC Cyber Hub Logo" 
-                  className="h-12 w-12 object-contain"
+                  className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
                 />
                 <span>(SCPSC Cyber Hub)</span>
               </div>
             </div>
-            <div className="flex gap-6 text-sm">
+            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm flex-wrap justify-center">
               <button 
-                className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded"
+                className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded whitespace-nowrap"
                 onClick={() => console.log('Privacy Policy clicked')}
                 data-testid="link-privacy"
               >
                 Privacy Policy
               </button>
               <button 
-                className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded"
+                className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded whitespace-nowrap"
                 onClick={() => console.log('Terms of Service clicked')}
                 data-testid="link-terms"
               >
