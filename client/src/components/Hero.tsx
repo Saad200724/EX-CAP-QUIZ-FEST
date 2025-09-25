@@ -1,4 +1,6 @@
 import RegistrationForm from "./RegistrationForm";
+import CountdownTimer from "./CountdownTimer";
+import quizLogo from "@/assets/logos/quiz-fest-logo.png";
 
 export default function Hero() {
   return (
@@ -14,17 +16,22 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="relative mb-6">
-            <span className="absolute top-0 left-0 text-white/70 text-xl md:text-2xl font-normal" data-testid="text-hero-presenter">EduTune presents</span>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight pt-12">
-              <span className="flicker-animation whitespace-nowrap" data-testid="text-hero-title">Ex-CAP Quiz Fest 2025</span>
-            </h1>
+            <img 
+              src={quizLogo} 
+              alt="Ex-CAP Quiz Fest 2025" 
+              className="mx-auto max-w-2xl w-full h-auto flicker-animation"
+              data-testid="img-quiz-logo"
+            />
           </div>
           
           <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
             In remembrance of the martyred Students of SCPSC
           </p>
 
-          <RegistrationForm />
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+            <RegistrationForm />
+            <CountdownTimer />
+          </div>
         </div>
       </div>
 
