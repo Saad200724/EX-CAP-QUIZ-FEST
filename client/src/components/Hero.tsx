@@ -14,13 +14,12 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            <span data-testid="text-hero-title">Ex-Cap Quiz Fest:</span>
-            <br />
-            <span className="text-white/90">The Next Chapter</span>
+            <span className="text-white/90 text-3xl md:text-4xl lg:text-5xl block mb-4" data-testid="text-hero-presenter">EduTune presents</span>
+            <span data-testid="text-hero-title">Ex Cap Quiz Fest 2025</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-subtitle">
-            The arena of quizzes, the battlefield of minds. Join the ultimate intellectual competition for students of all grades.
+            In remembrance of the martyred Students of SCPSC
           </p>
 
           <RegistrationForm />
