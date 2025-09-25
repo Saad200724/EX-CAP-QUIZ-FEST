@@ -43,21 +43,24 @@ export default function Footer() {
   };
 
   return (
-    <footer id="contact" className="bg-primary text-primary-foreground py-12 sm:py-16">
+    <footer id="contact" className="bg-primary text-primary-foreground py-8 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 lg:gap-12">
           {/* Brand Section */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" data-testid="text-footer-brand">
+            <h3 className="text-lg sm:text-2xl font-bold mb-3 sm:mb-6" data-testid="text-footer-brand">
               Ex-CAP Quiz Fest 2025
             </h3>
-            <p className="text-primary-foreground/80 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
+            <p className="text-primary-foreground/80 mb-3 sm:mb-6 leading-relaxed text-sm sm:text-base hidden sm:block">
               Empowering the next generation of leaders through educational excellence and competitive learning experiences.
+            </p>
+            <p className="text-primary-foreground/80 mb-3 leading-relaxed text-sm sm:hidden">
+              Quiz competition for students of all levels.
             </p>
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="hidden sm:block">
             <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6" data-testid="text-footer-contact-title">
               Contact Information
             </h4>
@@ -76,6 +79,23 @@ export default function Footer() {
                   </button>
                 );
               })}
+            </div>
+          </div>
+          
+          {/* Mobile Contact - Simplified */}
+          <div className="sm:hidden">
+            <h4 className="text-base font-semibold mb-3" data-testid="text-footer-contact-title-mobile">
+              Contact
+            </h4>
+            <div className="space-y-2">
+              <button
+                onClick={() => handleContactClick('tel:01780184038', 'Phone')}
+                className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
+                data-testid="link-contact-phone-mobile"
+              >
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                <span>01780184038</span>
+              </button>
             </div>
           </div>
 
@@ -118,21 +138,22 @@ export default function Footer() {
         </div>
 
         {/* Bottom Border */}
-        <div className="border-t border-primary-foreground/20 mt-8 sm:mt-12 pt-6 sm:pt-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4 sm:gap-6">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-primary-foreground/60 text-xs sm:text-sm text-center sm:text-left" data-testid="text-footer-copyright">
+        <div className="border-t border-primary-foreground/20 mt-6 sm:mt-12 pt-4 sm:pt-8">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-3 sm:gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-primary-foreground/60 text-xs sm:text-sm text-center sm:text-left" data-testid="text-footer-copyright">
               <span>© 2025 Ex-CAP Quiz. All rights reserved.</span>
-              <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
-                <span>Developed by</span>
+              <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center sm:justify-start">
+                <span className="hidden sm:inline">Developed by</span>
+                <span className="sm:hidden">by</span>
                 <img 
                   src={chCyberHubLogo} 
                   alt="SCPSC Cyber Hub Logo" 
-                  className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
+                  className="h-6 w-6 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
                 />
-                <span>(SCPSC Cyber Hub)</span>
+                <span className="text-xs sm:text-sm">(SCPSC Cyber Hub)</span>
               </div>
             </div>
-            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm flex-wrap justify-center">
+            <div className="hidden sm:flex gap-4 sm:gap-6 text-xs sm:text-sm flex-wrap justify-center">
               <button 
                 className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded whitespace-nowrap"
                 onClick={() => console.log('Privacy Policy clicked')}
