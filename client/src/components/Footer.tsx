@@ -152,7 +152,7 @@ export default function Footer() {
                   <img 
                     src={culturalClubLogo}
                     alt="SCPSC Cultural Club"
-                    className="h-8 sm:h-10 w-auto object-contain opacity-80"
+                    className="h-6 sm:h-8 w-auto object-contain opacity-80"
                   />
                 </div>
                 <div className="flex-shrink-0" data-testid="logo-ch-footer">
@@ -169,7 +169,7 @@ export default function Footer() {
                   <img 
                     src={culturalClubLogo}
                     alt="SCPSC Cultural Club"
-                    className="h-8 sm:h-10 w-auto object-contain opacity-80"
+                    className="h-6 sm:h-8 w-auto object-contain opacity-80"
                   />
                 </div>
                 <div className="flex-shrink-0">
