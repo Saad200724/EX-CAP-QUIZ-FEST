@@ -2,7 +2,7 @@ import RegistrationForm from "./RegistrationForm";
 import CountdownTimer from "./CountdownTimer";
 import quizLogo from "@/assets/logos/quiz-fest-logo.png";
 import { Link } from "wouter";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 
 export default function Hero() {
