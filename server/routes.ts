@@ -120,9 +120,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.cookie('admin_session', token, {
         httpOnly: true,
-        secure: isProduction,
+        secure: false, // Allow non-HTTPS in development
         sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        path: '/' // Ensure cookie is available for all paths
       });
       
       res.json({ 
