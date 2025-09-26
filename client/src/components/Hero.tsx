@@ -1,7 +1,7 @@
 import RegistrationForm from "./RegistrationForm";
 import CountdownTimer from "./CountdownTimer";
 import quizLogo from "@/assets/logos/quiz-fest-logo.png";
-import Link from "next/link";
+import { Link } from "wouter";
 import Button from "@/components/ui/Button";
 import { UserPlus } from "lucide-react";
 
