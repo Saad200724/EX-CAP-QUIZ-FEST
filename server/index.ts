@@ -6,7 +6,7 @@ import { setupVite, serveStatic, log } from "./vite";
 // Validate required environment variables
 const requiredEnvVars = [
   'DATABASE_URL',
-  'ADMIN_USERNAME', 
+  'ADMIN_USERNAME',
   'ADMIN_PASSWORD',
   'ADMIN_SESSION_SECRET'
 ];
