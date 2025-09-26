@@ -98,9 +98,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const adminSecret = process.env.ADMIN_SESSION_SECRET;
       
       if (!adminUsername || !adminPassword || !adminSecret) {
+        console.error('Missing admin environment variables:', {
+          hasUsername: !!adminUsername,
+          hasPassword: !!adminPassword,
+          hasSecret: !!adminSecret
+        });
         return res.status(500).json({ 
           error: 'Admin authentication not configured',
-          message: 'Please configure admin credentials' 
+          message: 'Please configure ADMIN_USERNAME, ADMIN_PASSWORD, and ADMIN_SESSION_SECRET in environment variables' 
         });
       }
       
