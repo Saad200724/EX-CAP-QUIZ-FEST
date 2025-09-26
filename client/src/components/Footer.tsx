@@ -135,21 +135,21 @@ export default function Footer() {
                 }
               />
             </div>
-          </div>
-        </div>
-
-        {/* Club Partners Section */}
-        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-primary-foreground/20">
-          <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-center" data-testid="text-footer-club-partners">
-            Club Partners
-          </h4>
-          <div className="flex justify-center">
-            <div className="flex-shrink-0" data-testid="logo-ch-footer">
-              <img 
-                src={chFooterLogo}
-                alt="CH Logo"
-                className="h-16 sm:h-20 w-auto object-contain opacity-80"
-              />
+            
+            {/* Club Partners below Follow Us */}
+            <div className="mt-6 sm:mt-8">
+              <h5 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4" data-testid="text-footer-club-partners">
+                Club Partners
+              </h5>
+              <div className="flex justify-start">
+                <div className="flex-shrink-0" data-testid="logo-ch-footer">
+                  <img 
+                    src={chFooterLogo}
+                    alt="CH Logo"
+                    className="h-12 sm:h-16 w-auto object-contain opacity-80"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
