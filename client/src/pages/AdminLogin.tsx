@@ -38,8 +38,10 @@ export default function AdminLogin() {
     },
     onSuccess: () => {
       setError("");
-      // Force a page reload to ensure cookies are properly set
-      window.location.href = "/admin";
+      // Use setTimeout to ensure cookie is set before navigation
+      setTimeout(() => {
+        setLocation("/admin");
+      }, 100);
     },
     onError: (error: Error) => {
       setError(error.message || "Login failed");
