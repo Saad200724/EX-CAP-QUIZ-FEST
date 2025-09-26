@@ -70,7 +70,7 @@ export default function Hero() {
                     <img 
                       src={culturalClubLogo}
                       alt="SCPSC Cultural Club"
-                      className="h-12 sm:h-14 w-auto object-contain opacity-90"
+                      className="h-8 sm:h-10 w-auto object-contain opacity-90"
                     />
                   </div>
                   <div className="flex-shrink-0" data-testid="logo-ch-footer">
@@ -87,7 +87,7 @@ export default function Hero() {
                     <img 
                       src={culturalClubLogo}
                       alt="SCPSC Cultural Club"
-                      className="h-12 sm:h-14 w-auto object-contain opacity-90"
+                      className="h-8 sm:h-10 w-auto object-contain opacity-90"
                     />
                   </div>
                   <div className="flex-shrink-0">
