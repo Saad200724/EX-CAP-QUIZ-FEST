@@ -16,10 +16,10 @@ export default function AdminRouteGuard({ children }: AdminRouteGuardProps) {
   });
 
   useEffect(() => {
-    if (error || (authData === null)) {
+    if (!isLoading && (error || !authData || !authData.authenticated)) {
       setLocation("/admin/login");
     }
-  }, [error, authData, setLocation]);
+  }, [error, authData, setLocation, isLoading]);
 
   if (isLoading) {
     return (
@@ -37,7 +37,7 @@ export default function AdminRouteGuard({ children }: AdminRouteGuardProps) {
     );
   }
 
-  if (error || !(authData as { authenticated?: boolean })?.authenticated) {
+  if (error || !authData || !authData.authenticated) {
     return null; // Will redirect to login via useEffect
   }
 
