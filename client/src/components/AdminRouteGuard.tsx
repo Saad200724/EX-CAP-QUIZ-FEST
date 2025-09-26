@@ -18,9 +18,16 @@ export default function AdminRouteGuard({ children }: AdminRouteGuardProps) {
 
   useEffect(() => {
     console.log('AdminRouteGuard state:', { isLoading, error, authData });
-    if (!isLoading && (error || !authData || !authData.authenticated)) {
-      console.log('Redirecting to login due to auth failure');
-      setLocation("/admin/login");
+    if (!isLoading) {
+      if (error) {
+        console.log('Auth error:', error);
+        setLocation("/admin/login");
+      } else if (!authData || !authData.authenticated) {
+        console.log('Not authenticated, redirecting to login');
+        setLocation("/admin/login");
+      } else {
+        console.log('User authenticated:', authData.user);
+      }
     }
   }, [error, authData, setLocation, isLoading]);
 

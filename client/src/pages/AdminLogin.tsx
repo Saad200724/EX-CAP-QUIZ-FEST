@@ -34,14 +34,16 @@ export default function AdminLogin() {
   const loginMutation = useMutation({
     mutationFn: async (data: LoginForm) => {
       const response = await apiRequest("POST", "/api/admin/login", data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
       return response.json();
     },
     onSuccess: () => {
       setError("");
-      // Use setTimeout to ensure cookie is set before navigation
-      setTimeout(() => {
-        setLocation("/admin");
-      }, 100);
+      // Force page reload to ensure session is properly recognized
+      window.location.href = "/admin";
     },
     onError: (error: Error) => {
       setError(error.message || "Login failed");
