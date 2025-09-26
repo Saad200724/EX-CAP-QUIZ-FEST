@@ -2,6 +2,8 @@ import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ContactForm from "./ContactForm";
 import chCyberHubLogo from "@/assets/logos/ch-cyber-hub-logo.png";
+import culturalClubLogo from "@assets/cultural_club_1758874001218.jpg";
+import chFooterLogo from "@assets/CH-LOGO-FOOTER_1758813481664.png";
 
 export default function Footer() {
   const contactInfo = [
@@ -137,8 +139,53 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Club Partners Section */}
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-primary-foreground/20">
+          <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-center" data-testid="text-footer-club-partners">
+            Club Partners
+          </h4>
+          <div className="overflow-hidden relative w-full max-w-4xl mx-auto">
+            <div className="flex animate-scroll-left">
+              {/* First set of logos */}
+              <div className="flex items-center justify-center gap-12 sm:gap-16 flex-shrink-0 min-w-full">
+                <div className="flex-shrink-0" data-testid="logo-cultural-club">
+                  <img 
+                    src={culturalClubLogo}
+                    alt="SCPSC Cultural Club"
+                    className="h-8 sm:h-10 w-auto object-contain opacity-80"
+                  />
+                </div>
+                <div className="flex-shrink-0" data-testid="logo-ch-footer">
+                  <img 
+                    src={chFooterLogo}
+                    alt="CH Logo"
+                    className="h-12 sm:h-16 w-auto object-contain opacity-80"
+                  />
+                </div>
+              </div>
+              {/* Duplicate set for seamless loop */}
+              <div className="flex items-center justify-center gap-12 sm:gap-16 flex-shrink-0 min-w-full">
+                <div className="flex-shrink-0">
+                  <img 
+                    src={culturalClubLogo}
+                    alt="SCPSC Cultural Club"
+                    className="h-8 sm:h-10 w-auto object-contain opacity-80"
+                  />
+                </div>
+                <div className="flex-shrink-0">
+                  <img 
+                    src={chFooterLogo}
+                    alt="CH Logo"
+                    className="h-12 sm:h-16 w-auto object-contain opacity-80"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Border */}
-        <div className="border-t border-primary-foreground/20 mt-6 sm:mt-12 pt-4 sm:pt-8">
+        <div className="border-t border-primary-foreground/20 mt-6 sm:mt-8 pt-4 sm:pt-8">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-3 sm:gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-primary-foreground/60 text-xs sm:text-sm text-center sm:text-left" data-testid="text-footer-copyright">
               <span>© 2025 Ex-CAP Quiz. All rights reserved.</span>
