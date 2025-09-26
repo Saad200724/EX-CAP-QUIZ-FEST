@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,14 +19,22 @@ import { UserPlus, Loader2, ArrowLeft, CheckCircle } from "lucide-react";
 import quizLogo from "@/assets/logos/quiz-fest-logo.png";
 
 // Extended validation schema with additional frontend validation
-const registrationFormSchema = insertRegistrationSchema.extend({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  university: z.string().min(2, "University name must be at least 2 characters"),
-  phone: z.string().optional(),
-  teamName: z.string().optional(),
-  isTeamLeader: z.boolean().optional(),
+const registrationFormSchema = z.object({
+  nameEnglish: z.string().min(2, "Name in English must be at least 2 characters"),
+  nameBangla: z.string().min(2, "Name in Bangla must be at least 2 characters"),
+  fatherName: z.string().min(2, "Father's name must be at least 2 characters"),
+  motherName: z.string().min(2, "Mother's name must be at least 2 characters"),
+  studentId: z.string().min(1, "Student ID is required"),
+  class: z.string().min(1, "Class is required"),
+  section: z.string().min(1, "Section is required"),
+  bloodGroup: z.string().min(1, "Blood group is required"),
+  phoneWhatsapp: z.string().min(10, "WhatsApp number must be at least 10 digits"),
+  email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
+  presentAddress: z.string().min(10, "Present address must be at least 10 characters"),
+  permanentAddress: z.string().min(10, "Permanent address must be at least 10 characters"),
+  classCategory: z.enum(["03-05", "06-08", "09-10", "11-12"], {
+    required_error: "Please select a class category",
+  }),
 });
 
 type RegistrationFormData = z.infer<typeof registrationFormSchema>;
@@ -36,19 +47,35 @@ export default function Register() {
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      nameEnglish: "",
+      nameBangla: "",
+      fatherName: "",
+      motherName: "",
+      studentId: "",
+      class: "",
+      section: "",
+      bloodGroup: "",
+      phoneWhatsapp: "",
       email: "",
-      university: "",
-      phone: "",
-      teamName: "",
-      isTeamLeader: false,
+      presentAddress: "",
+      permanentAddress: "",
+      classCategory: undefined,
     },
   });
 
   const registrationMutation = useMutation({
-    mutationFn: async (data: InsertRegistration) => {
-      return apiRequest("POST", "/api/registrations", data);
+    mutationFn: async (data: RegistrationFormData) => {
+      // Transform the data to match the expected API format
+      const transformedData = {
+        firstName: data.nameEnglish,
+        lastName: data.nameBangla,
+        email: data.email || undefined,
+        university: `Class: ${data.class}, Section: ${data.section}`,
+        phone: data.phoneWhatsapp,
+        teamName: data.classCategory,
+        isTeamLeader: false,
+      };
+      return apiRequest("POST", "/api/registrations", transformedData);
     },
     onSuccess: () => {
       toast({
@@ -185,16 +212,16 @@ export default function Register() {
                       <div className="grid md:grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
-                          name="firstName"
+                          name="nameEnglish"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-white">First Name *</FormLabel>
+                              <FormLabel className="text-white">Name (English) *</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="Enter your first name" 
+                                  placeholder="Enter your name in English" 
                                   {...field} 
                                   className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
-                                  data-testid="input-first-name"
+                                  data-testid="input-name-english"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -204,16 +231,115 @@ export default function Register() {
                         
                         <FormField
                           control={form.control}
-                          name="lastName"
+                          name="nameBangla"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-white">Last Name *</FormLabel>
+                              <FormLabel className="text-white">Name (Bangla) *</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="Enter your last name" 
+                                  placeholder="আপনার নাম বাংলায় লিখুন" 
                                   {...field} 
                                   className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
-                                  data-testid="input-last-name"
+                                  data-testid="input-name-bangla"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="fatherName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Father's Name *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your father's name" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
+                                  data-testid="input-father-name"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="motherName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Mother's Name *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your mother's name" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
+                                  data-testid="input-mother-name"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="studentId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Student ID *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your student ID" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
+                                  data-testid="input-student-id"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="class"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Class *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your class" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
+                                  data-testid="input-class"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="section"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Section *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your section" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
+                                  data-testid="input-section"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -224,10 +350,70 @@ export default function Register() {
 
                       <FormField
                         control={form.control}
+                        name="bloodGroup"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">Blood Group *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40">
+                                  <SelectValue placeholder="Select your blood group" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="A+">A+</SelectItem>
+                                <SelectItem value="A-">A-</SelectItem>
+                                <SelectItem value="B+">B+</SelectItem>
+                                <SelectItem value="B-">B-</SelectItem>
+                                <SelectItem value="AB+">AB+</SelectItem>
+                                <SelectItem value="AB-">AB-</SelectItem>
+                                <SelectItem value="O+">O+</SelectItem>
+                                <SelectItem value="O-">O-</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </CardContent>
+                  </Card>
+
+                  {/* Contact Information */}
+                  <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors duration-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-white flex items-center gap-2">
+                        <div className="w-2 h-2 bg-chart-2 rounded-full" />
+                        Contact
+                      </CardTitle>
+                      <p className="text-sm text-white/60">How can we reach you?</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="phoneWhatsapp"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">Phone Number (WhatsApp) *</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="tel" 
+                                placeholder="Enter your WhatsApp number" 
+                                {...field} 
+                                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
+                                data-testid="input-whatsapp"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">Email Address *</FormLabel>
+                            <FormLabel className="text-white">Email (Optional)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="email" 
@@ -241,19 +427,31 @@ export default function Register() {
                           </FormItem>
                         )}
                       />
+                    </CardContent>
+                  </Card>
 
+                  {/* Address */}
+                  <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors duration-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-white flex items-center gap-2">
+                        <div className="w-2 h-2 bg-chart-3 rounded-full" />
+                        Address
+                      </CardTitle>
+                      <p className="text-sm text-white/60">Where do you live?</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
                       <FormField
                         control={form.control}
-                        name="university"
+                        name="presentAddress"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">University/Institution *</FormLabel>
+                            <FormLabel className="text-white">Present Address *</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Enter your university or institution" 
+                              <Textarea 
+                                placeholder="Enter your present address" 
                                 {...field} 
-                                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
-                                data-testid="input-university"
+                                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40 min-h-20"
+                                data-testid="textarea-present-address"
                               />
                             </FormControl>
                             <FormMessage />
@@ -263,17 +461,16 @@ export default function Register() {
 
                       <FormField
                         control={form.control}
-                        name="phone"
+                        name="permanentAddress"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">Phone Number (Optional)</FormLabel>
+                            <FormLabel className="text-white">Permanent Address *</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="tel" 
-                                placeholder="Enter your phone number" 
+                              <Textarea 
+                                placeholder="Enter your permanent address" 
                                 {...field} 
-                                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
-                                data-testid="input-phone"
+                                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40 min-h-20"
+                                data-testid="textarea-permanent-address"
                               />
                             </FormControl>
                             <FormMessage />
@@ -283,54 +480,70 @@ export default function Register() {
                     </CardContent>
                   </Card>
 
-                  {/* Team Information */}
+                  {/* Class Category */}
                   <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors duration-200">
                     <CardHeader>
                       <CardTitle className="text-lg text-white flex items-center gap-2">
-                        <div className="w-2 h-2 bg-chart-2 rounded-full" />
-                        Team Information (Optional)
+                        <div className="w-2 h-2 bg-chart-4 rounded-full" />
+                        Class Category
                       </CardTitle>
-                      <p className="text-sm text-white/60">Participating with a team? Let us know!</p>
+                      <p className="text-sm text-white/60">Select your class category (can tick only one)</p>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent>
                       <FormField
                         control={form.control}
-                        name="teamName"
+                        name="classCategory"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Team Name</FormLabel>
+                          <FormItem className="space-y-3">
                             <FormControl>
-                              <Input 
-                                placeholder="Enter your team name (if participating as a team)" 
-                                {...field} 
-                                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
-                                data-testid="input-team-name"
-                              />
+                              <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="grid grid-cols-2 gap-4"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem 
+                                    value="03-05" 
+                                    id="class-03-05" 
+                                    className="border-white/20 text-white"
+                                  />
+                                  <FormLabel htmlFor="class-03-05" className="text-white cursor-pointer">
+                                    Class: 03-05
+                                  </FormLabel>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem 
+                                    value="06-08" 
+                                    id="class-06-08" 
+                                    className="border-white/20 text-white"
+                                  />
+                                  <FormLabel htmlFor="class-06-08" className="text-white cursor-pointer">
+                                    Class: 06-08
+                                  </FormLabel>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem 
+                                    value="09-10" 
+                                    id="class-09-10" 
+                                    className="border-white/20 text-white"
+                                  />
+                                  <FormLabel htmlFor="class-09-10" className="text-white cursor-pointer">
+                                    Class: 09-10
+                                  </FormLabel>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem 
+                                    value="11-12" 
+                                    id="class-11-12" 
+                                    className="border-white/20 text-white"
+                                  />
+                                  <FormLabel htmlFor="class-11-12" className="text-white cursor-pointer">
+                                    Class: 11-12
+                                  </FormLabel>
+                                </div>
+                              </RadioGroup>
                             </FormControl>
                             <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="isTeamLeader"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:text-primary"
-                                data-testid="checkbox-team-leader"
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel className="text-white">I am the team leader</FormLabel>
-                              <p className="text-sm text-white/60">
-                                Check this if you're registering on behalf of your team
-                              </p>
-                            </div>
                           </FormItem>
                         )}
                       />
