@@ -42,7 +42,7 @@ export default function Hero() {
               <Link href="/register">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-chart-1 to-chart-2 hover:from-chart-1/90 hover:to-chart-2/90 text-white border-0 text-lg px-8 py-4 h-auto font-semibold"
+                  className="bg-gradient-to-r from-chart-1 to-chart-2 hover:from-chart-1/90 hover:to-chart-2/90 text-white border-0 text-lg px-8 py-6 h-auto font-semibold min-h-14"
                   data-testid="button-register-hero"
                 >
                   <UserPlus className="w-6 h-6 mr-3" />
