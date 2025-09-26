@@ -101,7 +101,7 @@ export default function Register() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-diagonal relative overflow-hidden flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-diagonal relative overflow-hidden overflow-x-hidden flex items-center justify-center">
         {/* Background decorative elements */}
         <div className="absolute inset-0">
           <div className="absolute top-16 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
@@ -132,7 +132,7 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-diagonal relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-diagonal relative overflow-hidden overflow-x-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-16 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
