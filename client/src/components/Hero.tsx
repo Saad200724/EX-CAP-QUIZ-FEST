@@ -1,6 +1,9 @@
 import RegistrationForm from "./RegistrationForm";
 import CountdownTimer from "./CountdownTimer";
 import quizLogo from "@/assets/logos/quiz-fest-logo.png";
+import Link from "next/link";
+import Button from "@/components/ui/Button";
+import { UserPlus } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -27,7 +30,7 @@ export default function Hero() {
 
           {/* Spacer to push content down */}
           <div className="flex-1 min-h-[2rem]"></div>
-          
+
           {/* Memorial text */}
           <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4 font-bold" data-testid="text-hero-subtitle">
             In remembrance of the martyred students of SCPSC
@@ -36,7 +39,16 @@ export default function Hero() {
           {/* Registration and Timer at bottom */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16 sm:mb-24 md:mb-32 relative z-20 px-4">
             <div className="w-full sm:w-auto">
-              <RegistrationForm />
+              <Link href="/register">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4 h-auto"
+                  data-testid="button-register-hero"
+                >
+                  <UserPlus className="w-6 h-6 mr-3" />
+                  Register Now
+                </Button>
+              </Link>
             </div>
             <div className="w-full sm:w-auto max-w-sm">
               <CountdownTimer />

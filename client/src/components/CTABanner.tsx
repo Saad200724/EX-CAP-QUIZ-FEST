@@ -1,5 +1,6 @@
-import RegistrationForm from "./RegistrationForm";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
 
 export default function CTABanner() {
   return (
@@ -19,7 +20,16 @@ export default function CTABanner() {
           Don't miss this opportunity to compete with the best and showcase your intellectual abilities.
         </p>
 
-        <RegistrationForm />
+        <Link href="/register">
+          <Button 
+            size="lg" 
+            className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4 h-auto"
+            data-testid="button-register-now"
+          >
+            <UserPlus className="w-6 h-6 mr-3" />
+            Register Now
+          </Button>
+        </Link>
       </div>
     </section>
   );

@@ -143,27 +143,43 @@ export default function Register() {
       <div className="relative z-10 py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <div className="inline-block p-4 bg-white/10 rounded-full mb-6">
+              <UserPlus className="w-12 h-12 text-white" />
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" data-testid="text-register-title">
               Join the Competition
             </h2>
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Register now to secure your spot in Ex-CAP Quiz Fest 2025 and compete with the best minds.
+            <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+              Register now to secure your spot in Ex-CAP Quiz Fest 2025 and compete with the best minds from across the country.
             </p>
           </div>
 
-          <Card className="backdrop-blur-sm bg-white/10 border-white/20 shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center text-white" data-testid="text-registration-form-title">
+          <Card className="backdrop-blur-sm bg-white/10 border-white/20 shadow-2xl relative overflow-hidden">
+            {/* Decorative gradient overlay */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-chart-1 via-chart-2 to-chart-3" />
+            
+            <CardHeader className="pb-8">
+              <CardTitle className="text-2xl font-bold text-center text-white flex items-center justify-center gap-3" data-testid="text-registration-form-title">
+                <div className="p-2 bg-white/10 rounded-lg">
+                  <UserPlus className="w-6 h-6" />
+                </div>
                 Registration Form
               </CardTitle>
+              <p className="text-center text-white/70 mt-2">
+                Fill in your details to join the ultimate quiz competition
+              </p>
             </CardHeader>
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   {/* Personal Information */}
-                  <Card className="bg-white/5 border-white/10">
+                  <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors duration-200">
                     <CardHeader>
-                      <CardTitle className="text-lg text-white">Personal Information</CardTitle>
+                      <CardTitle className="text-lg text-white flex items-center gap-2">
+                        <div className="w-2 h-2 bg-chart-1 rounded-full" />
+                        Personal Information
+                      </CardTitle>
+                      <p className="text-sm text-white/60">Tell us about yourself</p>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid md:grid-cols-2 gap-4">
@@ -268,9 +284,13 @@ export default function Register() {
                   </Card>
 
                   {/* Team Information */}
-                  <Card className="bg-white/5 border-white/10">
+                  <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors duration-200">
                     <CardHeader>
-                      <CardTitle className="text-lg text-white">Team Information (Optional)</CardTitle>
+                      <CardTitle className="text-lg text-white flex items-center gap-2">
+                        <div className="w-2 h-2 bg-chart-2 rounded-full" />
+                        Team Information (Optional)
+                      </CardTitle>
+                      <p className="text-sm text-white/60">Participating with a team? Let us know!</p>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <FormField
