@@ -138,15 +138,15 @@ export default function Footer() {
             
             {/* Club Partners below Follow Us */}
             <div className="mt-6 sm:mt-8">
-              <h5 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4" data-testid="text-footer-club-partners">
-                Club Partners
-              </h5>
-              <div className="flex justify-start">
+              <div className="flex items-center gap-3">
+                <h5 className="text-sm sm:text-base font-semibold" data-testid="text-footer-club-partners">
+                  Club Partner
+                </h5>
                 <div className="flex-shrink-0" data-testid="logo-ch-footer">
                   <img 
                     src={chFooterLogo}
                     alt="CH Logo"
-                    className="h-12 sm:h-16 w-auto object-contain opacity-80"
+                    className="h-8 sm:h-12 w-auto object-contain opacity-80"
                   />
                 </div>
               </div>
