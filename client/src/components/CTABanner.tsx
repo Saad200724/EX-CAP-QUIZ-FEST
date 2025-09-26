@@ -23,7 +23,7 @@ export default function CTABanner() {
         <Link href="/register">
           <Button 
             size="lg" 
-            className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4 h-auto"
+            className="bg-gradient-to-r from-chart-1 to-chart-2 hover:from-chart-1/90 hover:to-chart-2/90 text-white border-0 text-lg px-8 py-3 h-auto font-semibold min-h-11"
             data-testid="button-register-now"
           >
             <UserPlus className="w-6 h-6 mr-3" />
