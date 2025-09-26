@@ -11,7 +11,7 @@ export default function About() {
               About the Event
             </h2>
             
-            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed text-justify">
               <p data-testid="text-about-description">
                 <strong>Ex-Cap Quiz Fest 2025</strong> - The arena of quizzes, the battlefield of minds. If you want to be the champion of this battlefield, join us for this extraordinary competition presented by Edutune.
               </p>

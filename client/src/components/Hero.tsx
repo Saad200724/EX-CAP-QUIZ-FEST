@@ -29,7 +29,7 @@ export default function Hero() {
           <div className="flex-1 min-h-[2rem]"></div>
           
           {/* Memorial text */}
-          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4" data-testid="text-hero-subtitle">
+          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4 font-bold" data-testid="text-hero-subtitle">
             In remembrance of the martyred students of SCPSC
           </p>
 
