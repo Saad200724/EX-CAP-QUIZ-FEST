@@ -38,7 +38,8 @@ export default function AdminLogin() {
     },
     onSuccess: () => {
       setError("");
-      setLocation("/admin");
+      // Force a page reload to ensure cookies are properly set
+      window.location.href = "/admin";
     },
     onError: (error: Error) => {
       setError(error.message || "Login failed");

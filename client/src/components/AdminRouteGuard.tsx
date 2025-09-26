@@ -13,10 +13,13 @@ export default function AdminRouteGuard({ children }: AdminRouteGuardProps) {
   const { data: authData, isLoading, error } = useQuery({
     queryKey: ["/api/admin/me"],
     retry: false,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
+    console.log('AdminRouteGuard state:', { isLoading, error, authData });
     if (!isLoading && (error || !authData || !authData.authenticated)) {
+      console.log('Redirecting to login due to auth failure');
       setLocation("/admin/login");
     }
   }, [error, authData, setLocation, isLoading]);
