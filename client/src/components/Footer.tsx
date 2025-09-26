@@ -146,7 +146,7 @@ export default function Footer() {
                   <img 
                     src={chFooterLogo}
                     alt="CH Logo"
-                    className="h-10 sm:h-16 w-auto object-contain opacity-80"
+                    className="h-12 sm:h-20 w-auto object-contain opacity-80"
                   />
                 </div>
               </div>
