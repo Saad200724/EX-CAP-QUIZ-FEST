@@ -39,7 +39,7 @@ export default function Navbar() {
   return (
     <nav className={`sticky top-0 z-50 w-full transition-all duration-300 border-b shadow-sm ${
       isScrolled 
-        ? "bg-transparent backdrop-blur-md supports-[backdrop-filter]:bg-white/10" 
+        ? "bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/95" 
         : "bg-[#73349c]"
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
