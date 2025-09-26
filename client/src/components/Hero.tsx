@@ -1,6 +1,8 @@
 import RegistrationForm from "./RegistrationForm";
 import CountdownTimer from "./CountdownTimer";
 import quizLogo from "@/assets/logos/quiz-fest-logo.png";
+import culturalClubLogo from "@assets/cultural_club_1758874001218.jpg";
+import chFooterLogo from "@assets/CH-LOGO-FOOTER_1758813481664.png";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
@@ -37,7 +39,7 @@ export default function Hero() {
           </p>
 
           {/* Registration and Timer at bottom */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16 sm:mb-24 md:mb-32 relative z-20 px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-8 sm:mb-12 relative z-20 px-4">
             <div className="w-full sm:w-auto">
               <Link href="/register">
                 <Button 
@@ -52,6 +54,29 @@ export default function Hero() {
             </div>
             <div className="w-full sm:w-auto max-w-sm">
               <CountdownTimer />
+            </div>
+          </div>
+
+          {/* Club Partners Section */}
+          <div className="mb-16 sm:mb-24 md:mb-32 relative z-20 px-4">
+            <h3 className="text-white/90 text-lg sm:text-xl font-semibold mb-6 text-center" data-testid="text-club-partners">
+              Club Partners
+            </h3>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
+              <div className="flex-shrink-0" data-testid="logo-cultural-club">
+                <img 
+                  src={culturalClubLogo}
+                  alt="SCPSC Cultural Club"
+                  className="h-16 sm:h-20 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
+                />
+              </div>
+              <div className="flex-shrink-0" data-testid="logo-ch-footer">
+                <img 
+                  src={chFooterLogo}
+                  alt="CH Logo"
+                  className="h-16 sm:h-20 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
+                />
+              </div>
             </div>
           </div>
         </div>
