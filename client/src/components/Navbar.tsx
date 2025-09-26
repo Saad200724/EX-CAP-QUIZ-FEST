@@ -37,9 +37,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 w-full transition-all duration-300 border-b shadow-sm ${
+    <nav className={`fixed top-0 z-[9999] w-full transition-all duration-300 border-b shadow-lg ${
       isScrolled 
-        ? "bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/95" 
+        ? "bg-white backdrop-blur-md shadow-md" 
         : "bg-[#73349c]"
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
