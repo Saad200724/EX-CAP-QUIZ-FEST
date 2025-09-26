@@ -62,20 +62,42 @@ export default function Hero() {
             <h3 className="text-white/90 text-lg sm:text-xl font-semibold mb-6 text-center" data-testid="text-club-partners">
               Club Partners
             </h3>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
-              <div className="flex-shrink-0" data-testid="logo-cultural-club">
-                <img 
-                  src={culturalClubLogo}
-                  alt="SCPSC Cultural Club"
-                  className="h-16 sm:h-20 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
-                />
-              </div>
-              <div className="flex-shrink-0" data-testid="logo-ch-footer">
-                <img 
-                  src={chFooterLogo}
-                  alt="CH Logo"
-                  className="h-16 sm:h-20 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
-                />
+            <div className="overflow-hidden relative w-full max-w-4xl mx-auto">
+              <div className="flex animate-scroll-left">
+                {/* First set of logos */}
+                <div className="flex items-center justify-center gap-12 sm:gap-16 flex-shrink-0 min-w-full">
+                  <div className="flex-shrink-0" data-testid="logo-cultural-club">
+                    <img 
+                      src={culturalClubLogo}
+                      alt="SCPSC Cultural Club"
+                      className="h-16 sm:h-20 w-auto object-contain opacity-90"
+                    />
+                  </div>
+                  <div className="flex-shrink-0" data-testid="logo-ch-footer">
+                    <img 
+                      src={chFooterLogo}
+                      alt="CH Logo"
+                      className="h-16 sm:h-20 w-auto object-contain opacity-90"
+                    />
+                  </div>
+                </div>
+                {/* Duplicate set for seamless loop */}
+                <div className="flex items-center justify-center gap-12 sm:gap-16 flex-shrink-0 min-w-full">
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={culturalClubLogo}
+                      alt="SCPSC Cultural Club"
+                      className="h-16 sm:h-20 w-auto object-contain opacity-90"
+                    />
+                  </div>
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={chFooterLogo}
+                      alt="CH Logo"
+                      className="h-16 sm:h-20 w-auto object-contain opacity-90"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
