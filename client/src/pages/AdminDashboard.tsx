@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Users, Phone, Mail, School, Calendar, Download, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Users, Phone, Mail, School, Calendar, Download, Filter, Search, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -16,6 +17,10 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchNumber, setSearchNumber] = useState<string>("");
+  const [searchResult, setSearchResult] = useState<Registration | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchResult, setShowSearchResult] = useState(false);
 
   // Fetch registrations data
   const {
@@ -43,6 +48,53 @@ export default function AdminDashboard() {
   // Get counts for each category
   const getCategoryCount = (category: string) => {
     return getFilteredRegistrations(category).length;
+  };
+
+  // Search function
+  const searchByRegistrationNumber = async () => {
+    if (!searchNumber.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a registration number to search.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await apiRequest(`/api/admin/registrations/search/${encodeURIComponent(searchNumber.trim())}`);
+      setSearchResult(response.data);
+      setShowSearchResult(true);
+      toast({
+        title: "Search Successful",
+        description: `Found registration for ${response.data.nameEnglish}`,
+      });
+    } catch (error: any) {
+      setSearchResult(null);
+      setShowSearchResult(false);
+      if (error.status === 404) {
+        toast({
+          title: "No Registration Found",
+          description: `No registration found with number: ${searchNumber}`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Search Failed",
+          description: "Failed to search registration. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchNumber("");
+    setSearchResult(null);
+    setShowSearchResult(false);
   };
 
   // CSV Export function
@@ -170,6 +222,114 @@ export default function AdminDashboard() {
             </p>
           </div>
         </div>
+
+        {/* Search Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Search Student by Registration Number
+            </CardTitle>
+            <CardDescription>
+              Enter a registration number to find detailed information about a specific student.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3 mb-4">
+              <div className="flex-1">
+                <Input
+                  placeholder="Enter registration number (e.g., QF1758975905539IV6)"
+                  value={searchNumber}
+                  onChange={(e) => setSearchNumber(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && searchByRegistrationNumber()}
+                  data-testid="input-search-registration"
+                />
+              </div>
+              <Button 
+                onClick={searchByRegistrationNumber}
+                disabled={isSearching || !searchNumber.trim()}
+                data-testid="button-search"
+              >
+                {isSearching ? "Searching..." : "Search"}
+              </Button>
+              {showSearchResult && (
+                <Button 
+                  variant="outline" 
+                  onClick={clearSearch}
+                  data-testid="button-clear-search"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Clear
+                </Button>
+              )}
+            </div>
+
+            {/* Search Result */}
+            {showSearchResult && searchResult && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h4 className="text-lg font-semibold text-green-800 mb-3">Student Found</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-600">Name (English):</span>
+                    <p className="text-gray-900">{searchResult.nameEnglish}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Name (Bangla):</span>
+                    <p className="text-gray-900">{searchResult.nameBangla}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Student ID:</span>
+                    <p className="text-gray-900 font-mono">{searchResult.studentId}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Registration Number:</span>
+                    <p className="text-gray-900 font-mono">{searchResult.registrationNumber || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Class & Section:</span>
+                    <p className="text-gray-900">{searchResult.class} - {searchResult.section}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Blood Group:</span>
+                    <p className="text-gray-900">{searchResult.bloodGroup}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Father's Name:</span>
+                    <p className="text-gray-900">{searchResult.fatherName}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Mother's Name:</span>
+                    <p className="text-gray-900">{searchResult.motherName}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Phone/WhatsApp:</span>
+                    <p className="text-gray-900">{searchResult.phoneWhatsapp}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Email:</span>
+                    <p className="text-gray-900">{searchResult.email || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Present Address:</span>
+                    <p className="text-gray-900">{searchResult.presentAddress}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Permanent Address:</span>
+                    <p className="text-gray-900">{searchResult.permanentAddress}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Class Category:</span>
+                    <p className="text-gray-900">Class {searchResult.classCategory}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Registration Date:</span>
+                    <p className="text-gray-900">{formatDate(searchResult.createdAt)}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">

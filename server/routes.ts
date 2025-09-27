@@ -121,6 +121,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/admin/registrations/search/:registrationNumber", requireAdmin, async (req, res) => {
+    try {
+      const { registrationNumber } = req.params;
+      
+      if (!registrationNumber) {
+        return res.status(400).json({
+          error: "Validation error",
+          message: "Registration number is required"
+        });
+      }
+
+      const registration = await storage.getRegistrationByRegistrationNumber(registrationNumber);
+      
+      if (!registration) {
+        return res.status(404).json({
+          error: "Not found",
+          message: "No registration found with this number"
+        });
+      }
+
+      res.json({
+        success: true,
+        data: registration
+      });
+    } catch (error) {
+      console.error("Failed to search registration:", error);
+      res.status(500).json({
+        error: "Internal server error",
+        message: "Failed to search registration"
+      });
+    }
+  });
+
   app.get("/api/admin/contact", requireAdmin, async (req, res) => {
     try {
       const submissions = await storage.getContactSubmissions();

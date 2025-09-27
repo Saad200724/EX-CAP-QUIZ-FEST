@@ -26,6 +26,7 @@ export interface IStorage {
   getRegistrations(): Promise<Registration[]>;
   getRegistrationByEmail(email: string): Promise<Registration | undefined>;
   getRegistrationByStudentId(studentId: string): Promise<Registration | undefined>;
+  getRegistrationByRegistrationNumber(registrationNumber: string): Promise<Registration | undefined>;
 
   // Contact submission methods
   createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
@@ -111,6 +112,14 @@ export class DatabaseStorage implements IStorage {
 
   async getContactSubmissions(): Promise<ContactSubmission[]> {
     return db.select().from(contactSubmissions).orderBy(desc(contactSubmissions.createdAt));
+  }
+
+  async getRegistrationByRegistrationNumber(registrationNumber: string): Promise<Registration | undefined> {
+    const [registration] = await db
+      .select()
+      .from(registrations)
+      .where(eq(registrations.registrationNumber, registrationNumber));
+    return registration || undefined;
   }
 }
 
