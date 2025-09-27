@@ -58,10 +58,13 @@ function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFuncti
     return res.status(500).json({ error: 'Admin authentication not configured' });
   }
 
-  const sessionCookie = req.headers.cookie
+  const cookieHeader = req.headers.cookie
     ?.split(';')
-    ?.find((c: string) => c.trim().startsWith('admin_session='))
-    ?.split('=')[1];
+    ?.find((c: string) => c.trim().startsWith('admin_session='));
+  
+  const sessionCookie = cookieHeader 
+    ? decodeURIComponent(cookieHeader.substring(cookieHeader.indexOf('=') + 1))
+    : undefined;
 
   if (!sessionCookie) {
     return res.status(401).json({ error: 'Unauthorized' });
