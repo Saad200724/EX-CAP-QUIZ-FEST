@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertRegistrationSchema, insertContactSubmissionSchema } from "@shared/schema";
 import { z } from "zod";
 import crypto from "crypto";
+import { createGoogleSheetsService } from "./googleSheets";
 
 // Extend Express Request type for admin session
 declare module 'express-session' {
@@ -151,6 +152,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create registration
       const registration = await storage.createRegistration(validatedData);
+      
+      // Send to Google Sheets (async, don't wait for it to complete)
+      const googleSheetsService = createGoogleSheetsService();
+      if (googleSheetsService) {
+        googleSheetsService.addRegistration(registration)
+          .then(() => {
+            console.log(`📊 Registration for ${registration.nameEnglish} sent to Google Sheets`);
+          })
+          .catch((error) => {
+            console.error(`❌ Failed to send registration to Google Sheets:`, error);
+            // Don't fail the main registration if Google Sheets fails
+          });
+      }
       
       res.status(201).json({
         success: true,
