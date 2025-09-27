@@ -68,7 +68,7 @@ export default function Navbar() {
               isScrolled ? "text-gray-800" : "text-white"
             }`} data-testid="text-logo">
               <span className="hidden sm:inline">Ex-CAP Quiz Fest 2025</span>
-              <span className="sm:hidden leading-tight">Ex-CAP<br />Quiz</span>
+              <span className="sm:hidden leading-tight">Ex-CAP Quiz</span>
             </h1>
           </div>
 
