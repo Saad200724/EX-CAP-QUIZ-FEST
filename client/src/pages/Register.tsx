@@ -29,7 +29,7 @@ const registrationFormSchema = z.object({
   section: z.string().min(1, "Section is required"),
   bloodGroup: z.string().min(1, "Blood group is required"),
   phoneWhatsapp: z.string().min(10, "WhatsApp number must be at least 10 digits"),
-  email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
   presentAddress: z.string().min(10, "Present address must be at least 10 characters"),
   permanentAddress: z.string().min(10, "Permanent address must be at least 10 characters"),
   classCategory: z.enum(["03-05", "06-08", "09-10", "11-12"], {
@@ -428,7 +428,7 @@ export default function Register() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-white">Email (Optional)</FormLabel>
+                            <FormLabel className="text-white">Email *</FormLabel>
                             <FormControl>
                               <Input 
                                 type="email" 

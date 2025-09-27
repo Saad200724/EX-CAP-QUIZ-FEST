@@ -21,7 +21,7 @@ export const registrations = pgTable("registrations", {
   section: text("section").notNull(),
   bloodGroup: text("blood_group").notNull(),
   phoneWhatsapp: text("phone_whatsapp").notNull(),
-  email: text("email"),
+  email: text("email").notNull(),
   presentAddress: text("present_address").notNull(),
   permanentAddress: text("permanent_address").notNull(),
   classCategory: text("class_category").notNull(),
