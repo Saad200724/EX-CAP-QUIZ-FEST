@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, Users, Phone, Mail, School, Calendar } from "lucide-react";
+import { Users, Phone, Mail, School, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -27,32 +27,6 @@ export default function AdminDashboard() {
 
   const registrations: Registration[] = registrationsResponse?.data || [];
 
-  // Logout mutation
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/admin/logout");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.clear(); // Clear all cached data
-      setLocation("/admin/login");
-      toast({
-        title: "Logged out",
-        description: "You have been logged out successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Logout failed",
-        description: "Failed to logout. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleLogout = () => {
-    logoutMutation.mutate();
-  };
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -96,15 +70,6 @@ export default function AdminDashboard() {
               Ex-CAP Quiz Fest 2025 Registration Management
             </p>
           </div>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            disabled={logoutMutation.isPending}
-            data-testid="button-logout"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            {logoutMutation.isPending ? "Logging out..." : "Logout"}
-          </Button>
         </div>
 
         {/* Stats Cards */}

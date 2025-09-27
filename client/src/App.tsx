@@ -7,7 +7,6 @@ import Home from "@/pages/Home";
 import Register from "@/pages/Register";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
-import AdminRouteGuard from "@/components/AdminRouteGuard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -16,11 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/register" component={Register} />
       <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin">
-        <AdminRouteGuard>
-          <AdminDashboard />
-        </AdminRouteGuard>
-      </Route>
+      <Route path="/admin" component={AdminDashboard} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

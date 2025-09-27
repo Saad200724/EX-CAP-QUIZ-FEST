@@ -103,7 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Protected admin data routes
-  app.get("/api/admin/registrations", requireAdmin, async (req, res) => {
+  app.get("/api/admin/registrations", async (req, res) => {
     try {
       const registrations = await storage.getRegistrations();
       res.json({
