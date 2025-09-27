@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                   placeholder="Enter registration ID (e.g., QF-12345) or student ID"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && searchByRegistrationOrStudentId()}
+                  onKeyDown={(e) => e.key === 'Enter' && searchByRegistrationOrStudentId()}
                   data-testid="input-search-registration"
                 />
               </div>

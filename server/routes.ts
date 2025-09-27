@@ -106,8 +106,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Protected admin data routes
-  app.get("/api/admin/registrations", async (req, res) => {
+  app.get("/api/admin/registrations", requireAdmin, async (req, res) => {
     try {
+      // Prevent caching to avoid 304 responses that frontend treats as errors
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       const registrations = await storage.getRegistrations();
       res.json({
         success: true,
@@ -125,6 +130,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/admin/registrations/search/:searchTerm", requireAdmin, async (req, res) => {
     try {
       const { searchTerm } = req.params;
+      
+      // Prevent caching to avoid 304 responses that frontend treats as errors
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       
       if (!searchTerm) {
         return res.status(400).json({
