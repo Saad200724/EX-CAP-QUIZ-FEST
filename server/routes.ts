@@ -46,6 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const adminUsername = process.env.ADMIN_USERNAME;
       const adminPassword = process.env.ADMIN_PASSWORD;
       
+      
       if (!adminUsername || !adminPassword) {
         console.error('Missing admin environment variables:', {
           hasUsername: !!adminUsername,
