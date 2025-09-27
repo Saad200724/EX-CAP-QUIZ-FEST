@@ -7,18 +7,21 @@ export default function EventDetails() {
       icon: Calendar,
       title: "Date",
       value: "October 14, 2025",
+      valueShort: "Oct 14, 2025",
       subtitle: "Tuesday"
     },
     {
       icon: Clock,
       title: "Time",
       value: "Tiffin Period",
+      valueShort: "Tiffin",
       subtitle: ""
     },
     {
       icon: MapPin,
       title: "Venue",
-      value: "SCPSC Campus",
+      value: "Savar Cantonment Public School & College",
+      valueShort: "SCPSC",
       subtitle: ""
     }
   ];
@@ -51,11 +54,17 @@ export default function EventDetails() {
                   </div>
                   
                   <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="text-xs sm:text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
+                    <h3 className="text-xs sm:text-sm font-normal text-muted-foreground mb-2 uppercase tracking-wider">
                       {detail.title}
                     </h3>
                     
-                    <p className="text-sm sm:text-lg font-normal text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
+                    {/* Mobile: Short text */}
+                    <p className="block sm:hidden text-sm font-normal text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
+                      {detail.valueShort}
+                    </p>
+                    
+                    {/* Desktop: Full text */}
+                    <p className="hidden sm:block text-lg font-normal text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
                       {detail.value}
                     </p>
                     
