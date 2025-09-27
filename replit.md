@@ -48,9 +48,10 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Database
-- **Neon Database**: PostgreSQL-compatible serverless database for production
-- **Connection**: Uses connection pooling via @neondatabase/serverless package
+- **Supabase Database**: PostgreSQL-compatible serverless database for production
+- **Connection**: Direct PostgreSQL connection using pg library with SSL
 - **Migrations**: Drizzle Kit for database schema migrations and management
+- **Status**: Connected and operational with synchronized schema
 
 ## UI Framework
 - **Radix UI**: Headless component primitives for accessibility and functionality
