@@ -63,13 +63,11 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-1">
-              Ex-CAP Quiz Fest 2025 Registration Management
-            </p>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Quiz Fest Admin Dashboard</h1>
+          <p className="text-gray-600 mt-1">
+            Ex-CAP Quiz Fest 2025 - Registration Management & Statistics
+          </p>
         </div>
 
         {/* Stats Cards */}
@@ -81,7 +79,8 @@ export default function AdminDashboard() {
                   <Users className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Registrations</p>
+                  <p className="text-sm font-medium text-gray-600">Total Participants</p>
+                  <p className="text-xs text-gray-500">People registered for quiz</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {isLoading ? "..." : registrations.length}
                   </p>
@@ -97,9 +96,10 @@ export default function AdminDashboard() {
                   <Users className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Team Leaders</p>
+                  <p className="text-sm font-medium text-gray-600">Individual Players</p>
+                  <p className="text-xs text-gray-500">Playing without teams</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : registrations.filter((r: Registration) => r.isTeamLeader).length}
+                    {isLoading ? "..." : registrations.filter((r: Registration) => !r.teamName).length}
                   </p>
                 </div>
               </div>
@@ -114,6 +114,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Universities</p>
+                  <p className="text-xs text-gray-500">Different institutions</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {isLoading ? "..." : new Set(registrations.map((r: Registration) => r.university)).size}
                   </p>
@@ -129,7 +130,8 @@ export default function AdminDashboard() {
                   <Users className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Teams</p>
+                  <p className="text-sm font-medium text-gray-600">Teams Formed</p>
+                  <p className="text-xs text-gray-500">Groups of participants</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {isLoading ? "..." : new Set(registrations.filter((r: Registration) => r.teamName).map((r: Registration) => r.teamName)).size}
                   </p>
@@ -144,10 +146,10 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              Registration Data
+              Participant Registrations
             </CardTitle>
             <CardDescription>
-              View and manage all quiz fest registrations
+              All people who have registered for the Ex-CAP Quiz Fest 2025
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -162,20 +164,20 @@ export default function AdminDashboard() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>University</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Team</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Registered</TableHead>
+                      <TableHead>Participant Name</TableHead>
+                      <TableHead>Email Address</TableHead>
+                      <TableHead>University/Institution</TableHead>
+                      <TableHead>Phone Number</TableHead>
+                      <TableHead>Team Name</TableHead>
+                      <TableHead>Team Status</TableHead>
+                      <TableHead>Registration Date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {registrations.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                          No registrations found
+                          No participants have registered yet. When people fill out the registration form, they will appear here.
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -212,15 +214,19 @@ export default function AdminDashboard() {
                           </TableCell>
                           <TableCell>
                             {registration.teamName ? (
-                              <span className="text-sm">{registration.teamName}</span>
+                              <span className="text-sm font-medium">{registration.teamName}</span>
                             ) : (
-                              <span className="text-gray-400 text-sm">Individual</span>
+                              <span className="text-gray-400 text-sm">Playing individually</span>
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant={registration.isTeamLeader ? "default" : "secondary"}>
-                              {registration.isTeamLeader ? "Team Leader" : "Member"}
-                            </Badge>
+                            {registration.teamName ? (
+                              <Badge variant={registration.isTeamLeader ? "default" : "secondary"}>
+                                {registration.isTeamLeader ? "Team Leader" : "Team Member"}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline">Individual Player</Badge>
+                            )}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
