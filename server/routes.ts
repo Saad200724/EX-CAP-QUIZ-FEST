@@ -142,18 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate request body
       const validatedData = insertRegistrationSchema.parse(req.body);
       
-      // Check if email is already registered (only if email is provided)
-      if (validatedData.email) {
-        const existingRegistration = await storage.getRegistrationByEmail(validatedData.email);
-        if (existingRegistration) {
-          return res.status(409).json({
-            error: "Email already registered",
-            message: "This email address is already registered for the event."
-          });
-        }
-      }
-
-      // Check if student ID is already registered
+      // Check if student ID is already registered (unique per student)
       const existingStudentRegistration = await storage.getRegistrationByStudentId(validatedData.studentId);
       if (existingStudentRegistration) {
         return res.status(409).json({
