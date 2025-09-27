@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Users, Phone, Mail, School, Calendar, Download } from "lucide-react";
+import { Users, Phone, Mail, School, Calendar, Download, Filter } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -14,6 +15,7 @@ import type { Registration } from "@shared/schema";
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Fetch registrations data
   const {
@@ -27,12 +29,30 @@ export default function AdminDashboard() {
 
   const registrations: Registration[] = registrationsResponse?.data || [];
 
+  // Filter registrations based on selected category
+  const getFilteredRegistrations = (category: string) => {
+    if (category === "all") return registrations;
+    if (category === "09-12") {
+      return registrations.filter(r => ["09-10", "11-12"].includes(r.classCategory));
+    }
+    return registrations.filter(r => r.classCategory === category);
+  };
+
+  const filteredRegistrations = getFilteredRegistrations(selectedCategory);
+
+  // Get counts for each category
+  const getCategoryCount = (category: string) => {
+    return getFilteredRegistrations(category).length;
+  };
+
   // CSV Export function
-  const exportToCSV = () => {
-    if (registrations.length === 0) {
+  const exportToCSV = (category: string = "all") => {
+    const dataToExport = getFilteredRegistrations(category);
+    
+    if (dataToExport.length === 0) {
       toast({
         title: "No Data",
-        description: "No registrations available to export.",
+        description: `No registrations available to export for ${category === "all" ? "all categories" : `Class ${category}`}.`,
         variant: "destructive",
       });
       return;
@@ -55,7 +75,7 @@ export default function AdminDashboard() {
       "Class Category"
     ];
 
-    const csvData = registrations.map(reg => [
+    const csvData = dataToExport.map(reg => [
       formatDate(reg.createdAt),
       reg.nameEnglish,
       reg.nameBangla,
@@ -80,7 +100,12 @@ export default function AdminDashboard() {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `quiz-fest-registrations-${new Date().toISOString().split('T')[0]}.csv`);
+    
+    const fileName = category === "all" 
+      ? `quiz-fest-all-registrations-${new Date().toISOString().split('T')[0]}.csv`
+      : `quiz-fest-class-${category}-registrations-${new Date().toISOString().split('T')[0]}.csv`;
+    
+    link.setAttribute('download', fileName);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -88,7 +113,7 @@ export default function AdminDashboard() {
 
     toast({
       title: "Export Successful",
-      description: `Exported ${registrations.length} registrations to CSV file.`,
+      description: `Exported ${dataToExport.length} registrations for ${category === "all" ? "all categories" : `Class ${category}`} to CSV file.`,
     });
   };
 
@@ -102,6 +127,14 @@ export default function AdminDashboard() {
       minute: "2-digit",
     });
   };
+
+  const categories = [
+    { id: "all", label: "Total Students", color: "bg-blue-600" },
+    { id: "03-05", label: "Class 03-05", color: "bg-green-600" },
+    { id: "06-08", label: "Class 06-08", color: "bg-purple-600" },
+    { id: "09-10", label: "Class 09-10", color: "bg-orange-600" },
+    { id: "11-12", label: "Class 11-12", color: "bg-red-600" },
+  ];
 
   if (error) {
     return (
@@ -134,86 +167,71 @@ export default function AdminDashboard() {
               Ex-CAP Quiz Fest 2025 - Registration Management & Statistics
             </p>
           </div>
-          <Button 
-            onClick={exportToCSV}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-            data-testid="button-export-csv"
-            disabled={isLoading || registrations.length === 0}
-          >
-            <Download className="w-4 h-4" />
-            Export to CSV
-          </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users className="w-5 h-5 text-blue-600" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+          {categories.map((category) => (
+            <Card 
+              key={category.id}
+              className={`cursor-pointer transition-all duration-200 ${
+                selectedCategory === category.id 
+                  ? 'ring-2 ring-blue-500 bg-blue-50' 
+                  : 'hover:shadow-md'
+              }`}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`p-2 ${category.color.replace('bg-', 'bg-')} bg-opacity-10 rounded-lg`}>
+                    <Users className={`w-5 h-5 ${category.color.replace('bg-', 'text-')}`} />
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      exportToCSV(category.id);
+                    }}
+                    disabled={isLoading || getCategoryCount(category.id) === 0}
+                    className="h-6 w-6 p-0"
+                    title={`Export ${category.label} to CSV`}
+                  >
+                    <Download className="w-3 h-3" />
+                  </Button>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Students</p>
-                  <p className="text-xs text-gray-500">Students registered</p>
+                  <p className="text-sm font-medium text-gray-600">{category.label}</p>
+                  <p className="text-xs text-gray-500">
+                    {category.id === "all" ? "All categories" : "Students registered"}
+                  </p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : registrations.length}
+                    {isLoading ? "..." : getCategoryCount(category.id)}
                   </p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <School className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Class 03-05</p>
-                  <p className="text-xs text-gray-500">Primary level</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : registrations.filter((r: Registration) => r.classCategory === "03-05").length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <School className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Class 06-08</p>
-                  <p className="text-xs text-gray-500">Middle level</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : registrations.filter((r: Registration) => r.classCategory === "06-08").length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <School className="w-5 h-5 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Class 09-12</p>
-                  <p className="text-xs text-gray-500">Secondary level</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : registrations.filter((r: Registration) => ["09-10", "11-12"].includes(r.classCategory)).length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Current Filter Info */}
+        <div className="mb-4 flex items-center gap-2">
+          <Filter className="w-4 h-4 text-gray-500" />
+          <span className="text-sm text-gray-600">
+            Currently showing: <strong>
+              {categories.find(c => c.id === selectedCategory)?.label || "All Students"}
+            </strong> ({filteredRegistrations.length} registrations)
+          </span>
+          {selectedCategory !== "all" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedCategory("all")}
+              className="ml-2"
+            >
+              Show All
+            </Button>
+          )}
         </div>
 
         {/* Registrations Table */}
@@ -222,9 +240,17 @@ export default function AdminDashboard() {
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
               Student Registrations
+              {selectedCategory !== "all" && (
+                <Badge variant="outline" className="ml-2">
+                  {categories.find(c => c.id === selectedCategory)?.label}
+                </Badge>
+              )}
             </CardTitle>
             <CardDescription>
-              All students who have registered for the Ex-CAP Quiz Fest 2025
+              {selectedCategory === "all" 
+                ? "All students who have registered for the Ex-CAP Quiz Fest 2025"
+                : `Students registered in ${categories.find(c => c.id === selectedCategory)?.label}`
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -249,14 +275,17 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {registrations.length === 0 ? (
+                    {filteredRegistrations.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                          No students have registered yet. When students fill out the registration form, they will appear here.
+                          {selectedCategory === "all" 
+                            ? "No students have registered yet. When students fill out the registration form, they will appear here."
+                            : `No students have registered for ${categories.find(c => c.id === selectedCategory)?.label} yet.`
+                          }
                         </TableCell>
                       </TableRow>
                     ) : (
-                      registrations.map((registration: Registration) => (
+                      filteredRegistrations.map((registration: Registration) => (
                         <TableRow key={registration.id} data-testid={`row-registration-${registration.id}`}>
                           <TableCell className="font-medium">
                             <div>
