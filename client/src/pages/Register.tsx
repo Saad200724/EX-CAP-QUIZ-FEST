@@ -114,11 +114,11 @@ export default function Register() {
               <div className="space-y-2 text-white/90">
                 <p className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-chart-1 rounded-full"></span>
-                  <strong>Mobile 1:</strong> +880 1XXX-XXXXXX
+                  <strong>Mobile 1:</strong> 01780184038
                 </p>
                 <p className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-chart-2 rounded-full"></span>
-                  <strong>Mobile 2:</strong> +880 1XXX-XXXXXX
+                  <strong>Mobile 2:</strong> 01711988862
                 </p>
               </div>
             </div>
