@@ -107,8 +107,21 @@ export default function Register() {
               Registration Complete!
             </h1>
             <p className="text-xl text-white/80 mb-8">
-              Thank you for registering for Ex-CAP Quiz Fest 2025. We'll send you a confirmation email with all the details shortly.
+              Thank you for registering for Ex-CAP Quiz Fest 2025. If you have any queries, please contact us on the following numbers:
             </p>
+            <div className="bg-white/10 rounded-lg p-6 mb-8 backdrop-blur-sm">
+              <h3 className="text-lg font-semibold text-white mb-4">Contact Information</h3>
+              <div className="space-y-2 text-white/90">
+                <p className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-chart-1 rounded-full"></span>
+                  <strong>Mobile 1:</strong> +880 1XXX-XXXXXX
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-chart-2 rounded-full"></span>
+                  <strong>Mobile 2:</strong> +880 1XXX-XXXXXX
+                </p>
+              </div>
+            </div>
           </div>
           
           <Link href="/">
