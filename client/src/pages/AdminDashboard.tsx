@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Users, Phone, Mail, School, Calendar } from "lucide-react";
+import { Users, Phone, Mail, School, Calendar, Download } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -27,6 +27,70 @@ export default function AdminDashboard() {
 
   const registrations: Registration[] = registrationsResponse?.data || [];
 
+  // CSV Export function
+  const exportToCSV = () => {
+    if (registrations.length === 0) {
+      toast({
+        title: "No Data",
+        description: "No registrations available to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const headers = [
+      "Registration Date",
+      "Name (English)",
+      "Name (Bangla)",
+      "Father's Name",
+      "Mother's Name",
+      "Student ID",
+      "Class",
+      "Section", 
+      "Blood Group",
+      "Phone (WhatsApp)",
+      "Email",
+      "Present Address",
+      "Permanent Address",
+      "Class Category"
+    ];
+
+    const csvData = registrations.map(reg => [
+      formatDate(reg.createdAt),
+      reg.nameEnglish,
+      reg.nameBangla,
+      reg.fatherName,
+      reg.motherName,
+      reg.studentId,
+      reg.class,
+      reg.section,
+      reg.bloodGroup,
+      reg.phoneWhatsapp,
+      reg.email || '',
+      reg.presentAddress,
+      reg.permanentAddress,
+      reg.classCategory
+    ]);
+
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `quiz-fest-registrations-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Export Successful",
+      description: `Exported ${registrations.length} registrations to CSV file.`,
+    });
+  };
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -63,11 +127,22 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Quiz Fest Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Ex-CAP Quiz Fest 2025 - Registration Management & Statistics
-          </p>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Quiz Fest Admin Dashboard</h1>
+            <p className="text-gray-600 mt-1">
+              Ex-CAP Quiz Fest 2025 - Registration Management & Statistics
+            </p>
+          </div>
+          <Button 
+            onClick={exportToCSV}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            data-testid="button-export-csv"
+            disabled={isLoading || registrations.length === 0}
+          >
+            <Download className="w-4 h-4" />
+            Export to CSV
+          </Button>
         </div>
 
         {/* Stats Cards */}
