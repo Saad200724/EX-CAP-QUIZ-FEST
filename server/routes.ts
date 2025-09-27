@@ -122,23 +122,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/registrations/search/:registrationNumber", requireAdmin, async (req, res) => {
+  app.get("/api/admin/registrations/search/:searchTerm", requireAdmin, async (req, res) => {
     try {
-      const { registrationNumber } = req.params;
+      const { searchTerm } = req.params;
       
-      if (!registrationNumber) {
+      if (!searchTerm) {
         return res.status(400).json({
           error: "Validation error",
-          message: "Registration number is required"
+          message: "Search term is required"
         });
       }
 
-      const registration = await storage.getRegistrationByRegistrationNumber(registrationNumber);
+      // First try searching by registration number
+      let registration = await storage.getRegistrationByRegistrationNumber(searchTerm);
+      
+      // If not found by registration number, try searching by student ID
+      if (!registration) {
+        registration = await storage.getRegistrationByStudentId(searchTerm);
+      }
       
       if (!registration) {
         return res.status(404).json({
           error: "Not found",
-          message: "No registration found with this number"
+          message: "No registration found with this registration ID or student ID"
         });
       }
 

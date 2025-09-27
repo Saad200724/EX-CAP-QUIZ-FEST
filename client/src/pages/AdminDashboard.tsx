@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [searchNumber, setSearchNumber] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResult, setSearchResult] = useState<Registration | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchResult, setShowSearchResult] = useState(false);
@@ -51,11 +51,11 @@ export default function AdminDashboard() {
   };
 
   // Search function
-  const searchByRegistrationNumber = async () => {
-    if (!searchNumber.trim()) {
+  const searchByRegistrationOrStudentId = async () => {
+    if (!searchTerm.trim()) {
       toast({
         title: "Validation Error",
-        description: "Please enter a registration number to search.",
+        description: "Please enter a registration ID or student ID to search.",
         variant: "destructive",
       });
       return;
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
 
     setIsSearching(true);
     try {
-      const response = await apiRequest("GET", `/api/admin/registrations/search/${encodeURIComponent(searchNumber.trim())}`);
+      const response = await apiRequest("GET", `/api/admin/registrations/search/${encodeURIComponent(searchTerm.trim())}`);
       const data = await response.json();
       setSearchResult(data.data);
       setShowSearchResult(true);
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
       if (error.message?.includes("404")) {
         toast({
           title: "No Registration Found",
-          description: `No registration found with number: ${searchNumber}`,
+          description: `No registration found with ID: ${searchTerm}`,
           variant: "destructive",
         });
       } else {
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
   };
 
   const clearSearch = () => {
-    setSearchNumber("");
+    setSearchTerm("");
     setSearchResult(null);
     setShowSearchResult(false);
   };
@@ -230,26 +230,26 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="w-5 h-5" />
-              Search Student by Registration Number
+              Search Student by Registration ID or Student ID
             </CardTitle>
             <CardDescription>
-              Enter a registration number to find detailed information about a specific student.
+              Enter a registration ID (e.g., QF-12345) or student ID to find detailed information about a specific student.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex gap-3 mb-4">
               <div className="flex-1">
                 <Input
-                  placeholder="Enter registration number (e.g., QF1758975905539IV6)"
-                  value={searchNumber}
-                  onChange={(e) => setSearchNumber(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && searchByRegistrationNumber()}
+                  placeholder="Enter registration ID (e.g., QF-12345) or student ID"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && searchByRegistrationOrStudentId()}
                   data-testid="input-search-registration"
                 />
               </div>
               <Button 
-                onClick={searchByRegistrationNumber}
-                disabled={isSearching || !searchNumber.trim()}
+                onClick={searchByRegistrationOrStudentId}
+                disabled={isSearching || !searchTerm.trim()}
                 data-testid="button-search"
               >
                 {isSearching ? "Searching..." : "Search"}
