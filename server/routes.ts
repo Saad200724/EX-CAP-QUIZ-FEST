@@ -5,6 +5,7 @@ import { insertRegistrationSchema, insertContactSubmissionSchema } from "@shared
 import { z } from "zod";
 import crypto from "crypto";
 import { createGoogleSheetsService } from "./googleSheets";
+import { createEmailService } from "./emailService";
 
 // Extend Express Request type for admin session
 declare module 'express-session' {
@@ -175,6 +176,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.error(`❌ Failed to send registration to Google Sheets:`, error);
             // Don't fail the main registration if Google Sheets fails
           });
+      }
+
+      // Send confirmation email (async, don't wait for it to complete)
+      if (registration.email) {
+        const emailService = createEmailService();
+        if (emailService) {
+          emailService.sendRegistrationConfirmation(registration)
+            .then(() => {
+              console.log(`📧 Confirmation email sent to ${registration.nameEnglish} (${registration.email})`);
+            })
+            .catch((error) => {
+              console.error(`❌ Failed to send confirmation email to ${registration.email}:`, error);
+              // Don't fail the main registration if email fails
+            });
+        }
       }
       
       res.status(201).json({

@@ -13,6 +13,21 @@ const requiredEnvVars = [
   'ADMIN_SESSION_SECRET'
 ];
 
+// Optional email service environment variables
+const emailEnvVars = [
+  'SMTP_HOST',
+  'SMTP_PORT', 
+  'SMTP_USER',
+  'SMTP_PASS',
+  'FROM_EMAIL'
+];
+
+const missingEmailVars = emailEnvVars.filter(envVar => !process.env[envVar]);
+if (missingEmailVars.length > 0) {
+  console.warn('⚠️ Email service not configured. Missing environment variables:', missingEmailVars);
+  console.warn('Email confirmations will be skipped. Add these variables to enable email notifications.');
+}
+
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
