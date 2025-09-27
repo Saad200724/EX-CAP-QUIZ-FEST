@@ -11,13 +11,19 @@ export const users = pgTable("users", {
 
 export const registrations = pgTable("registrations", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull().unique(),
-  university: text("university").notNull(),
-  phone: text("phone"),
-  teamName: text("team_name"),
-  isTeamLeader: boolean("is_team_leader").default(false),
+  nameEnglish: text("name_english").notNull(),
+  nameBangla: text("name_bangla").notNull(),
+  fatherName: text("father_name").notNull(),
+  motherName: text("mother_name").notNull(),
+  studentId: text("student_id").notNull(),
+  class: text("class").notNull(),
+  section: text("section").notNull(),
+  bloodGroup: text("blood_group").notNull(),
+  phoneWhatsapp: text("phone_whatsapp").notNull(),
+  email: text("email"),
+  presentAddress: text("present_address").notNull(),
+  permanentAddress: text("permanent_address").notNull(),
+  classCategory: text("class_category").notNull(),
   createdAt: timestamp("created_at").default(sql`now()`).notNull(),
 });
 

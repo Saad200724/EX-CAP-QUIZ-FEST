@@ -65,17 +65,8 @@ export default function Register() {
 
   const registrationMutation = useMutation({
     mutationFn: async (data: RegistrationFormData) => {
-      // Transform the data to match the expected API format
-      const transformedData = {
-        firstName: data.nameEnglish,
-        lastName: data.nameBangla,
-        email: data.email || undefined,
-        university: `Class: ${data.class}, Section: ${data.section}`,
-        phone: data.phoneWhatsapp,
-        teamName: data.classCategory,
-        isTeamLeader: false,
-      };
-      return apiRequest("POST", "/api/registrations", transformedData);
+      // Send the data directly without transformation
+      return apiRequest("POST", "/api/registrations", data);
     },
     onSuccess: () => {
       toast({

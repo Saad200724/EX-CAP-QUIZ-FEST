@@ -79,8 +79,8 @@ export default function AdminDashboard() {
                   <Users className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Participants</p>
-                  <p className="text-xs text-gray-500">People registered for quiz</p>
+                  <p className="text-sm font-medium text-gray-600">Total Students</p>
+                  <p className="text-xs text-gray-500">Students registered</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {isLoading ? "..." : registrations.length}
                   </p>
@@ -93,13 +93,13 @@ export default function AdminDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
-                  <Users className="w-5 h-5 text-green-600" />
+                  <School className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Individual Players</p>
-                  <p className="text-xs text-gray-500">Playing without teams</p>
+                  <p className="text-sm font-medium text-gray-600">Class 03-05</p>
+                  <p className="text-xs text-gray-500">Primary level</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : registrations.filter((r: Registration) => !r.teamName).length}
+                    {isLoading ? "..." : registrations.filter((r: Registration) => r.classCategory === "03-05").length}
                   </p>
                 </div>
               </div>
@@ -113,10 +113,10 @@ export default function AdminDashboard() {
                   <School className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Universities</p>
-                  <p className="text-xs text-gray-500">Different institutions</p>
+                  <p className="text-sm font-medium text-gray-600">Class 06-08</p>
+                  <p className="text-xs text-gray-500">Middle level</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : new Set(registrations.map((r: Registration) => r.university)).size}
+                    {isLoading ? "..." : registrations.filter((r: Registration) => r.classCategory === "06-08").length}
                   </p>
                 </div>
               </div>
@@ -127,13 +127,13 @@ export default function AdminDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-orange-100 rounded-lg">
-                  <Users className="w-5 h-5 text-orange-600" />
+                  <School className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Teams Formed</p>
-                  <p className="text-xs text-gray-500">Groups of participants</p>
+                  <p className="text-sm font-medium text-gray-600">Class 09-12</p>
+                  <p className="text-xs text-gray-500">Secondary level</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {isLoading ? "..." : new Set(registrations.filter((r: Registration) => r.teamName).map((r: Registration) => r.teamName)).size}
+                    {isLoading ? "..." : registrations.filter((r: Registration) => ["09-10", "11-12"].includes(r.classCategory)).length}
                   </p>
                 </div>
               </div>
@@ -146,10 +146,10 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              Participant Registrations
+              Student Registrations
             </CardTitle>
             <CardDescription>
-              All people who have registered for the Ex-CAP Quiz Fest 2025
+              All students who have registered for the Ex-CAP Quiz Fest 2025
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -164,12 +164,12 @@ export default function AdminDashboard() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Participant Name</TableHead>
-                      <TableHead>Email Address</TableHead>
-                      <TableHead>University/Institution</TableHead>
-                      <TableHead>Phone Number</TableHead>
-                      <TableHead>Team Name</TableHead>
-                      <TableHead>Team Status</TableHead>
+                      <TableHead>Student Name</TableHead>
+                      <TableHead>Student ID</TableHead>
+                      <TableHead>Class & Section</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Phone (WhatsApp)</TableHead>
+                      <TableHead>Blood Group</TableHead>
                       <TableHead>Registration Date</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -177,56 +177,42 @@ export default function AdminDashboard() {
                     {registrations.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                          No participants have registered yet. When people fill out the registration form, they will appear here.
+                          No students have registered yet. When students fill out the registration form, they will appear here.
                         </TableCell>
                       </TableRow>
                     ) : (
                       registrations.map((registration: Registration) => (
                         <TableRow key={registration.id} data-testid={`row-registration-${registration.id}`}>
                           <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              <div>
-                                <p className="font-medium">{registration.firstName} {registration.lastName}</p>
-                              </div>
+                            <div>
+                              <p className="font-medium">{registration.nameEnglish}</p>
+                              <p className="text-sm text-gray-500">{registration.nameBangla}</p>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Mail className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">{registration.email}</span>
+                            <span className="text-sm font-mono">{registration.studentId}</span>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="text-sm font-medium">Class: {registration.class}</p>
+                              <p className="text-xs text-gray-500">Section: {registration.section}</p>
                             </div>
                           </TableCell>
                           <TableCell>
+                            <Badge variant="outline">
+                              Class {registration.classCategory}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
                             <div className="flex items-center gap-2">
-                              <School className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">{registration.university}</span>
+                              <Phone className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm">{registration.phoneWhatsapp}</span>
                             </div>
                           </TableCell>
                           <TableCell>
-                            {registration.phone ? (
-                              <div className="flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm">{registration.phone}</span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400 text-sm">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {registration.teamName ? (
-                              <span className="text-sm font-medium">{registration.teamName}</span>
-                            ) : (
-                              <span className="text-gray-400 text-sm">Playing individually</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {registration.teamName ? (
-                              <Badge variant={registration.isTeamLeader ? "default" : "secondary"}>
-                                {registration.isTeamLeader ? "Team Leader" : "Team Member"}
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline">Individual Player</Badge>
-                            )}
+                            <Badge variant="secondary">
+                              {registration.bloodGroup}
+                            </Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
