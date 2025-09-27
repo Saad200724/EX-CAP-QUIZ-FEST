@@ -265,19 +265,26 @@ export default function AdminDashboard() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Student Name</TableHead>
-                      <TableHead>Student ID</TableHead>
-                      <TableHead>Class & Section</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Phone (WhatsApp)</TableHead>
-                      <TableHead>Blood Group</TableHead>
                       <TableHead>Registration Date</TableHead>
+                      <TableHead>Name (English)</TableHead>
+                      <TableHead>Name (Bangla)</TableHead>
+                      <TableHead>Father's Name</TableHead>
+                      <TableHead>Mother's Name</TableHead>
+                      <TableHead>Student ID</TableHead>
+                      <TableHead>Class</TableHead>
+                      <TableHead>Section</TableHead>
+                      <TableHead>Blood Group</TableHead>
+                      <TableHead>Phone (WhatsApp)</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Present Address</TableHead>
+                      <TableHead>Permanent Address</TableHead>
+                      <TableHead>Class Category</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredRegistrations.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                        <TableCell colSpan={14} className="text-center py-8 text-gray-500">
                           {selectedCategory === "all" 
                             ? "No students have registered yet. When students fill out the registration form, they will appear here."
                             : `No students have registered for ${categories.find(c => c.id === selectedCategory)?.label} yet.`
@@ -287,24 +294,36 @@ export default function AdminDashboard() {
                     ) : (
                       filteredRegistrations.map((registration: Registration) => (
                         <TableRow key={registration.id} data-testid={`row-registration-${registration.id}`}>
-                          <TableCell className="font-medium">
-                            <div>
-                              <p className="font-medium">{registration.nameEnglish}</p>
-                              <p className="text-sm text-gray-500">{registration.nameBangla}</p>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm">{formatDate(registration.createdAt)}</span>
                             </div>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            <span className="text-sm">{registration.nameEnglish}</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{registration.nameBangla}</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{registration.fatherName}</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{registration.motherName}</span>
                           </TableCell>
                           <TableCell>
                             <span className="text-sm font-mono">{registration.studentId}</span>
                           </TableCell>
                           <TableCell>
-                            <div>
-                              <p className="text-sm font-medium">Class: {registration.class}</p>
-                              <p className="text-xs text-gray-500">Section: {registration.section}</p>
-                            </div>
+                            <span className="text-sm">{registration.class}</span>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">
-                              Class {registration.classCategory}
+                            <span className="text-sm">{registration.section}</span>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {registration.bloodGroup}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -314,15 +333,25 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary">
-                              {registration.bloodGroup}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm">{registration.email || 'N/A'}</span>
+                            </div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">{formatDate(registration.createdAt)}</span>
-                            </div>
+                            <span className="text-sm max-w-32 truncate" title={registration.presentAddress}>
+                              {registration.presentAddress}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm max-w-32 truncate" title={registration.permanentAddress}>
+                              {registration.permanentAddress}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">
+                              Class {registration.classCategory}
+                            </Badge>
                           </TableCell>
                         </TableRow>
                       ))
