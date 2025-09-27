@@ -1,5 +1,7 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -22,6 +24,22 @@ if (missingEnvVars.length > 0) {
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Session middleware with memory store
+const MemoryStoreSession = MemoryStore(session);
+app.use(session({
+  secret: process.env.ADMIN_SESSION_SECRET || 'dev-secret-key-123',
+  resave: false,
+  saveUninitialized: false,
+  store: new MemoryStoreSession({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
+  cookie: {
+    secure: false, // Set to true in production with HTTPS
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();

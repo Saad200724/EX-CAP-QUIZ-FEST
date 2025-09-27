@@ -5,77 +5,22 @@ import { insertRegistrationSchema, insertContactSubmissionSchema } from "@shared
 import { z } from "zod";
 import crypto from "crypto";
 
-// Extend Express Request type for admin user
-interface AuthenticatedRequest extends Request {
-  adminUser?: string;
-}
-
-// Authentication helpers
-function sign(payload: string, secret: string): string {
-  const hmac = crypto.createHmac('sha256', secret);
-  return hmac.update(payload).digest('hex');
-}
-
-function verify(token: string, secret: string, maxAgeMs: number): string | null {
-  try {
-    const [payload, signature] = token.split('.');
-    if (!payload || !signature) return null;
-    
-    const expectedSignature = sign(payload, secret);
-    
-    // Constant-time comparison to prevent timing attacks
-    if (crypto.timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(expectedSignature, 'hex'))) {
-      const data = JSON.parse(Buffer.from(payload, 'base64').toString());
-      const now = Date.now();
-      
-      if (data.exp && now < data.exp && (now - data.iat) < maxAgeMs) {
-        return data.user;
-      }
-    }
-    return null;
-  } catch {
-    return null;
+// Extend Express Request type for admin session
+declare module 'express-session' {
+  interface SessionData {
+    adminUser?: string;
   }
 }
 
-function createAuthToken(username: string, secret: string): string {
-  const now = Date.now();
-  const payload = JSON.stringify({
-    user: username,
-    iat: now,
-    exp: now + (24 * 60 * 60 * 1000) // 24 hours
-  });
-  
-  const base64Payload = Buffer.from(payload).toString('base64');
-  const signature = sign(base64Payload, secret);
-  return `${base64Payload}.${signature}`;
+interface AuthenticatedRequest extends Request {
+  session: Express.Session & Partial<Express.SessionData> & { adminUser?: string };
 }
 
 // Admin middleware
 function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const adminSecret = process.env.ADMIN_SESSION_SECRET;
-  if (!adminSecret) {
-    return res.status(500).json({ error: 'Admin authentication not configured' });
-  }
-
-  const cookieHeader = req.headers.cookie
-    ?.split(';')
-    ?.find((c: string) => c.trim().startsWith('admin_session='));
-  
-  const sessionCookie = cookieHeader 
-    ? decodeURIComponent(cookieHeader.substring(cookieHeader.indexOf('=') + 1))
-    : undefined;
-
-  if (!sessionCookie) {
+  if (!req.session?.adminUser) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
-  const user = verify(sessionCookie, adminSecret, 24 * 60 * 60 * 1000);
-  if (!user) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  req.adminUser = user;
   next();
 }
 
@@ -92,23 +37,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     password: z.string().min(1)
   });
 
-  app.post("/api/admin/login", async (req, res) => {
+  app.post("/api/admin/login", async (req: AuthenticatedRequest, res) => {
     try {
       const { username, password } = adminLoginSchema.parse(req.body);
       
       const adminUsername = process.env.ADMIN_USERNAME;
       const adminPassword = process.env.ADMIN_PASSWORD;
-      const adminSecret = process.env.ADMIN_SESSION_SECRET;
       
-      if (!adminUsername || !adminPassword || !adminSecret) {
+      if (!adminUsername || !adminPassword) {
         console.error('Missing admin environment variables:', {
           hasUsername: !!adminUsername,
-          hasPassword: !!adminPassword,
-          hasSecret: !!adminSecret
+          hasPassword: !!adminPassword
         });
         return res.status(500).json({ 
           error: 'Admin authentication not configured',
-          message: 'Please configure ADMIN_USERNAME, ADMIN_PASSWORD, and ADMIN_SESSION_SECRET in environment variables' 
+          message: 'Please configure ADMIN_USERNAME and ADMIN_PASSWORD in environment variables' 
         });
       }
       
@@ -123,16 +66,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const token = createAuthToken(username, adminSecret);
-      const isProduction = process.env.NODE_ENV === 'production';
-      
-      res.cookie('admin_session', token, {
-        httpOnly: true,
-        secure: false, // Allow non-HTTPS in development
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        path: '/'
-      });
+      // Set session
+      req.session.adminUser = username;
       
       res.json({ 
         success: true,
@@ -153,13 +88,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/logout", (req, res) => {
-    res.clearCookie('admin_session');
-    res.json({ success: true, message: 'Logout successful' });
+  app.post("/api/admin/logout", (req: AuthenticatedRequest, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ error: 'Logout failed' });
+      }
+      res.json({ success: true, message: 'Logout successful' });
+    });
   });
 
   app.get("/api/admin/me", requireAdmin, (req: AuthenticatedRequest, res: Response) => {
-    res.json({ authenticated: true, user: req.adminUser });
+    res.json({ authenticated: true, user: req.session.adminUser });
   });
 
   // Protected admin data routes
