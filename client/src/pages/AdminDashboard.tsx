@@ -63,17 +63,19 @@ export default function AdminDashboard() {
 
     setIsSearching(true);
     try {
-      const response = await apiRequest(`/api/admin/registrations/search/${encodeURIComponent(searchNumber.trim())}`);
-      setSearchResult(response.data);
+      const response = await apiRequest("GET", `/api/admin/registrations/search/${encodeURIComponent(searchNumber.trim())}`);
+      const data = await response.json();
+      setSearchResult(data.data);
       setShowSearchResult(true);
       toast({
         title: "Search Successful",
-        description: `Found registration for ${response.data.nameEnglish}`,
+        description: `Found registration for ${data.data.nameEnglish}`,
       });
     } catch (error: any) {
       setSearchResult(null);
       setShowSearchResult(false);
-      if (error.status === 404) {
+      console.error("Search error:", error);
+      if (error.message?.includes("404")) {
         toast({
           title: "No Registration Found",
           description: `No registration found with number: ${searchNumber}`,
