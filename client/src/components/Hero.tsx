@@ -7,7 +7,7 @@ import { UserPlus } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-diagonal overflow-hidden">
+    <section className="relative min-h-[90vh] sm:min-h-screen flex items-center justify-center bg-gradient-diagonal overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-16 left-4 sm:top-20 sm:left-10 w-20 h-20 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-xl" />
@@ -17,9 +17,9 @@ export default function Hero() {
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto flex flex-col justify-center min-h-screen py-4">
-          {/* Quiz Logo - positioned at top with spacing from header */}
-          <div className="relative mt-16 sm:mt-20 mb-6 sm:mb-8">
+        <div className="max-w-4xl mx-auto flex flex-col justify-center min-h-[90vh] sm:min-h-screen py-4">
+          {/* Quiz Logo - positioned at top with reduced spacing for mobile */}
+          <div className="relative mt-12 sm:mt-16 md:mt-20 mb-2 sm:mb-4 md:mb-6">
             <img 
               src={quizLogo} 
               alt="Ex-CAP Quiz Fest 2025" 
@@ -28,16 +28,16 @@ export default function Hero() {
             />
           </div>
 
-          {/* Spacer to push content down */}
-          <div className="flex-1 min-h-[2rem]"></div>
-
-          {/* Memorial text */}
-          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4 font-bold" data-testid="text-hero-subtitle">
+          {/* Memorial text - moved closer to logo on mobile */}
+          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-4 sm:mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed px-4 font-bold" data-testid="text-hero-subtitle">
             In remembrance of the martyred students of SCPSC
           </p>
 
+          {/* Flexible spacer - smaller on mobile */}
+          <div className="flex-1 min-h-[1rem] sm:min-h-[2rem]"></div>
+
           {/* Registration and Timer at bottom */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16 sm:mb-24 md:mb-32 relative z-20 px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-8 sm:mb-16 md:mb-24 relative z-20 px-4">
             <div className="w-full sm:w-auto">
               <Link href="/register">
                 <Button 
