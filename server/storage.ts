@@ -83,15 +83,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   private async generateUniqueRegistrationNumber(): Promise<string> {
+    // Use a sequential approach with base36 encoding for mixed text/digit format
+    // This supports 36^5 = 60,466,176 unique combinations (more than enough for 10k+)
+    
     let registrationNumber: string;
     let isUnique = false;
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 100;
 
     while (!isUnique && attempts < maxAttempts) {
-      // Generate a random 6-digit number (100000 to 999999)
-      const randomNumber = Math.floor(Math.random() * 900000) + 100000;
-      registrationNumber = randomNumber.toString();
+      // Generate a sequential number based on current timestamp and attempts
+      // This creates a pseudo-sequential pattern that's more predictable
+      const baseNumber = Date.now() + attempts;
+      
+      // Convert to base36 and take last 5 characters, pad with zeros if needed
+      const base36Code = baseNumber.toString(36).toUpperCase().padStart(5, '0').slice(-5);
+      
+      // Format: QF-XXXXX (QF prefix + hyphen + 5-character alphanumeric code)
+      registrationNumber = `QF-${base36Code}`;
 
       // Check if this number already exists
       const existingRegistration = await this.getRegistrationByRegistrationNumber(registrationNumber);
@@ -104,9 +113,9 @@ export class DatabaseStorage implements IStorage {
     }
 
     if (!isUnique) {
-      // Fallback: use timestamp-based approach if we can't find a unique number
-      const timestamp = Date.now().toString().slice(-6);
-      registrationNumber = timestamp;
+      // Fallback: use current timestamp in base36 format
+      const fallbackCode = Date.now().toString(36).toUpperCase().slice(-5);
+      registrationNumber = `QF-${fallbackCode}`;
     }
 
     return registrationNumber!;
