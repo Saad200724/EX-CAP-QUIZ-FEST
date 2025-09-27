@@ -306,14 +306,25 @@ export default function Register() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-white">Class *</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder="Enter your class" 
-                                  {...field} 
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
-                                  data-testid="input-class"
-                                />
-                              </FormControl>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40">
+                                    <SelectValue placeholder="Select your class" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="3">Class 3</SelectItem>
+                                  <SelectItem value="4">Class 4</SelectItem>
+                                  <SelectItem value="5">Class 5</SelectItem>
+                                  <SelectItem value="6">Class 6</SelectItem>
+                                  <SelectItem value="7">Class 7</SelectItem>
+                                  <SelectItem value="8">Class 8</SelectItem>
+                                  <SelectItem value="9">Class 9</SelectItem>
+                                  <SelectItem value="10">Class 10</SelectItem>
+                                  <SelectItem value="11">Class 11</SelectItem>
+                                  <SelectItem value="12">Class 12</SelectItem>
+                                </SelectContent>
+                              </Select>
                               <FormMessage />
                             </FormItem>
                           )}
