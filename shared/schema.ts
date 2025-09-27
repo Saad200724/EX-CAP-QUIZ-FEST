@@ -11,6 +11,7 @@ export const users = pgTable("users", {
 
 export const registrations = pgTable("registrations", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  registrationNumber: text("registration_number").notNull().unique(),
   nameEnglish: text("name_english").notNull(),
   nameBangla: text("name_bangla").notNull(),
   fatherName: text("father_name").notNull(),
@@ -43,6 +44,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export const insertRegistrationSchema = createInsertSchema(registrations).omit({
   id: true,
+  registrationNumber: true,
   createdAt: true,
 });
 
