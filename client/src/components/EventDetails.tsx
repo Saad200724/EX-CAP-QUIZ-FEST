@@ -13,8 +13,8 @@ export default function EventDetails() {
     {
       icon: Clock,
       title: "Time",
-      value: "Tiffin Period",
-      valueShort: "Tiffin",
+      value: "To Be Announced",
+      valueShort: "TBA",
       subtitle: ""
     },
     {
@@ -49,8 +49,8 @@ export default function EventDetails() {
               >
                 <CardContent className="p-4 sm:p-6 text-center flex flex-col justify-center h-full">
                   {/* Icon with gradient background */}
-                  <div className="mx-auto w-10 h-10 sm:w-14 sm:h-14 bg-gradient-primary rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                    <IconComponent className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+                  <div className="mx-auto w-10 h-10 sm:w-14 sm:h-14 lg:w-20 lg:h-20 bg-gradient-primary rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                    <IconComponent className="w-5 h-5 sm:w-7 sm:h-7 lg:w-10 lg:h-10 text-white" />
                   </div>
                   
                   <div className="flex-1 flex flex-col justify-center">
