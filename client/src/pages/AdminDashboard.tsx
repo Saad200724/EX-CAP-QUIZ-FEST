@@ -60,6 +60,7 @@ export default function AdminDashboard() {
 
     const headers = [
       "Registration Date",
+      "Registration Number",
       "Name (English)",
       "Name (Bangla)",
       "Father's Name",
@@ -77,6 +78,7 @@ export default function AdminDashboard() {
 
     const csvData = dataToExport.map(reg => [
       formatDate(reg.createdAt),
+      reg.registrationNumber || 'N/A',
       reg.nameEnglish,
       reg.nameBangla,
       reg.fatherName,
@@ -266,6 +268,7 @@ export default function AdminDashboard() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Registration Date</TableHead>
+                      <TableHead>Registration Number</TableHead>
                       <TableHead>Name (English)</TableHead>
                       <TableHead>Name (Bangla)</TableHead>
                       <TableHead>Father's Name</TableHead>
@@ -284,7 +287,7 @@ export default function AdminDashboard() {
                   <TableBody>
                     {filteredRegistrations.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={14} className="text-center py-8 text-gray-500">
+                        <TableCell colSpan={15} className="text-center py-8 text-gray-500">
                           {selectedCategory === "all" 
                             ? "No students have registered yet. When students fill out the registration form, they will appear here."
                             : `No students have registered for ${categories.find(c => c.id === selectedCategory)?.label} yet.`
@@ -299,6 +302,11 @@ export default function AdminDashboard() {
                               <Calendar className="w-4 h-4 text-gray-400" />
                               <span className="text-sm">{formatDate(registration.createdAt)}</span>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {registration.registrationNumber || 'N/A'}
+                            </Badge>
                           </TableCell>
                           <TableCell className="font-medium">
                             <span className="text-sm">{registration.nameEnglish}</span>

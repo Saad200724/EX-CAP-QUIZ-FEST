@@ -29,6 +29,7 @@ export class GoogleSheetsService {
       const values = [
         [
           new Date().toISOString(), // Timestamp
+          registration.registrationNumber || 'N/A',
           registration.nameEnglish,
           registration.nameBangla,
           registration.fatherName,
@@ -47,7 +48,7 @@ export class GoogleSheetsService {
 
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: 'Sheet1!A:N', // Adjust range as needed
+        range: 'Sheet1!A:O', // Adjust range as needed
         valueInputOption: 'USER_ENTERED',
         resource: {
           values,
@@ -66,6 +67,7 @@ export class GoogleSheetsService {
       const headers = [
         [
           'Timestamp',
+          'Registration Number',
           'Name (English)',
           'Name (Bangla)',
           "Father's Name",
@@ -84,7 +86,7 @@ export class GoogleSheetsService {
 
       await this.sheets.spreadsheets.values.update({
         spreadsheetId: this.spreadsheetId,
-        range: 'Sheet1!A1:N1',
+        range: 'Sheet1!A1:O1',
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: headers,
