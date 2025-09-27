@@ -41,21 +41,21 @@ export default function EventDetails() {
             return (
               <Card 
                 key={index}
-                className="relative group hover-elevate transition-all duration-300 hover:shadow-lg border-0 bg-card/80 backdrop-blur h-full"
+                className="relative group hover-elevate transition-all duration-300 hover:shadow-lg border-0 bg-card/80 backdrop-blur aspect-square"
                 data-testid={`card-detail-${detail.title.toLowerCase()}`}
               >
-                <CardContent className="p-4 sm:p-6 text-center flex flex-col justify-between h-full">
+                <CardContent className="p-4 sm:p-6 text-center flex flex-col justify-center h-full">
                   {/* Icon with gradient background */}
                   <div className="mx-auto w-10 h-10 sm:w-14 sm:h-14 bg-gradient-primary rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                     <IconComponent className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                   </div>
                   
-                  <div className="flex-1">
+                  <div className="flex-1 flex flex-col justify-center">
                     <h3 className="text-xs sm:text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
                       {detail.title}
                     </h3>
                     
-                    <p className="text-sm sm:text-lg font-bold text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
+                    <p className="text-sm sm:text-lg font-normal text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
                       {detail.value}
                     </p>
                     

@@ -45,7 +45,7 @@ export default function CompetitionDetails() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16">
           {categories.map((category, index) => {
             const IconComponent = category.icon;
             const isExpanded = expandedCard === index;
@@ -62,11 +62,11 @@ export default function CompetitionDetails() {
               >
                 <div className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${category.color}`} />
                 
-                <CardHeader className="text-center pb-4">
-                  <div className={`mx-auto w-16 h-16 bg-gradient-to-r ${category.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <IconComponent className="w-8 h-8 text-white" />
+                <CardHeader className="text-center pb-2 sm:pb-4 p-4 sm:p-6">
+                  <div className={`mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${category.color} rounded-2xl flex items-center justify-center mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <IconComponent className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <CardTitle className="text-xl font-bold text-foreground">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-foreground">
                     {category.title}
                   </CardTitle>
                 </CardHeader>
