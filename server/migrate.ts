@@ -20,6 +20,20 @@ async function migrate() {
       ADD COLUMN IF NOT EXISTS registration_number TEXT;
     `;
     
+    // Add unique constraint to student_id if it doesn't exist
+    await sql`
+      DO $$ 
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint 
+          WHERE conname = 'registrations_student_id_unique'
+        ) THEN
+          ALTER TABLE registrations 
+          ADD CONSTRAINT registrations_student_id_unique UNIQUE (student_id);
+        END IF;
+      END $$;
+    `;
+    
     console.log("Migration completed successfully");
   } catch (error) {
     console.error("Migration failed:", error);

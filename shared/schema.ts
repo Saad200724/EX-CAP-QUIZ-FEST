@@ -16,7 +16,7 @@ export const registrations = pgTable("registrations", {
   nameBangla: text("name_bangla").notNull(),
   fatherName: text("father_name").notNull(),
   motherName: text("mother_name").notNull(),
-  studentId: text("student_id").notNull(),
+  studentId: text("student_id").notNull().unique(),
   class: text("class").notNull(),
   section: text("section").notNull(),
   bloodGroup: text("blood_group").notNull(),
