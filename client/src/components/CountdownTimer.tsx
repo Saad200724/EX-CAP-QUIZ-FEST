@@ -5,7 +5,7 @@ interface CountdownTimerProps {
   targetDate?: string;
 }
 
-export default function CountdownTimer({ targetDate = "2025-09-26T22:00:00+06:00" }: CountdownTimerProps) {
+export default function CountdownTimer({ targetDate = "2025-09-27T22:00:00+06:00" }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
