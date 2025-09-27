@@ -55,7 +55,7 @@ export default function EventDetails() {
                   
                   <div className="flex-1 flex flex-col justify-center">
                     {/* Mobile: Hide title for date card, show for others */}
-                    <h3 className={`text-xs sm:text-sm font-normal text-muted-foreground mb-2 uppercase tracking-wider ${
+                    <h3 className={`text-xs sm:text-base lg:text-lg font-semibold text-muted-foreground mb-2 uppercase tracking-wider ${
                       detail.title === 'Date' ? 'hidden sm:block' : 'block'
                     }`}>
                       {detail.title}
@@ -67,13 +67,13 @@ export default function EventDetails() {
                     </p>
                     
                     {/* Desktop: Full text */}
-                    <p className="hidden sm:block text-lg font-normal text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
+                    <p className="hidden sm:block text-xl lg:text-2xl font-semibold text-foreground mb-1 leading-tight" data-testid={`text-${detail.title.toLowerCase()}-value`}>
                       {detail.value}
                     </p>
                     
                     {/* Mobile: Hide subtitle for date card, show for others on desktop */}
                     {detail.subtitle && (
-                      <p className={`text-xs sm:text-sm text-muted-foreground ${
+                      <p className={`text-xs sm:text-base lg:text-lg font-medium text-muted-foreground ${
                         detail.title === 'Date' ? 'hidden sm:block' : 'block'
                       }`}>
                         {detail.subtitle}
