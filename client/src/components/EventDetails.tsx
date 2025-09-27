@@ -35,7 +35,7 @@ export default function EventDetails() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
           {details.map((detail, index) => {
             const IconComponent = detail.icon;
             return (
