@@ -53,8 +53,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createRegistration(data: InsertRegistration): Promise<Registration> {
-    // Generate a unique registration number
-    const registrationNumber = `QF${Date.now()}${Math.random().toString(36).substring(2, 5).toUpperCase()}`;
+    // Generate a unique 6-digit registration number
+    const registrationNumber = await this.generateUniqueRegistrationNumber();
 
     try {
       const [registration] = await db
@@ -80,6 +80,36 @@ export class DatabaseStorage implements IStorage {
         registrationNumber,
       };
     }
+  }
+
+  private async generateUniqueRegistrationNumber(): Promise<string> {
+    let registrationNumber: string;
+    let isUnique = false;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (!isUnique && attempts < maxAttempts) {
+      // Generate a random 6-digit number (100000 to 999999)
+      const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+      registrationNumber = randomNumber.toString();
+
+      // Check if this number already exists
+      const existingRegistration = await this.getRegistrationByRegistrationNumber(registrationNumber);
+      
+      if (!existingRegistration) {
+        isUnique = true;
+      }
+      
+      attempts++;
+    }
+
+    if (!isUnique) {
+      // Fallback: use timestamp-based approach if we can't find a unique number
+      const timestamp = Date.now().toString().slice(-6);
+      registrationNumber = timestamp;
+    }
+
+    return registrationNumber!;
   }
 
   async getRegistrations(): Promise<Registration[]> {
