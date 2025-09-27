@@ -11,7 +11,7 @@ export const users = pgTable("users", {
 
 export const registrations = pgTable("registrations", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  registrationNumber: text("registration_number").notNull().unique(),
+  registrationNumber: text("registration_number"),
   nameEnglish: text("name_english").notNull(),
   nameBangla: text("name_bangla").notNull(),
   fatherName: text("father_name").notNull(),

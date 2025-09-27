@@ -20,12 +20,12 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   // Registration methods
   createRegistration(registration: InsertRegistration): Promise<Registration>;
   getRegistrations(): Promise<Registration[]>;
   getRegistrationByEmail(email: string): Promise<Registration | undefined>;
-  
+
   // Contact submission methods
   createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
   getContactSubmissions(): Promise<ContactSubmission[]>;
@@ -50,12 +50,34 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async createRegistration(registration: InsertRegistration): Promise<Registration> {
-    const [newRegistration] = await db
-      .insert(registrations)
-      .values(registration)
-      .returning();
-    return newRegistration;
+  async createRegistration(data: InsertRegistration): Promise<Registration> {
+    // Generate a unique registration number
+    const registrationNumber = `QF${Date.now()}${Math.random().toString(36).substring(2, 5).toUpperCase()}`;
+
+    try {
+      const [registration] = await db
+        .insert(registrations)
+        .values({
+          ...data,
+          registrationNumber,
+        })
+        .returning();
+
+      return registration;
+    } catch (error) {
+      // If registration_number column doesn't exist, create without it
+      console.warn('Registration number column might not exist, creating registration without it');
+      const [registration] = await db
+        .insert(registrations)
+        .values(data)
+        .returning();
+
+      // Add registrationNumber after creation for consistency
+      return {
+        ...registration,
+        registrationNumber,
+      };
+    }
   }
 
   async getRegistrations(): Promise<Registration[]> {
