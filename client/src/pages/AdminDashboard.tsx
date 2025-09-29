@@ -223,8 +223,8 @@ export default function AdminDashboard() {
         description: `Exported ${dataToExport.length} registrations for ${category === "all" ? "all categories" : `Class ${category}`} to CSV file.`,
       });
       
-      // Log the export action for security audit
-      console.log(`Admin CSV export: ${category} category, ${dataToExport.length} records at ${new Date().toISOString()}`);
+      // Security audit logging removed - sensitive data should not be logged client-side
+      // Export action is logged server-side for security purposes
       
     } catch (error: any) {
       toast({
@@ -232,7 +232,7 @@ export default function AdminDashboard() {
         description: "Failed to export data. Please ensure you have admin permissions and try again.",
         variant: "destructive",
       });
-      console.error('CSV export error:', error);
+      // Error details should not be logged client-side for security
     }
   };
 
@@ -371,11 +371,11 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Phone/WhatsApp:</span>
-                    <p className="text-gray-900 font-mono">{searchResult.phoneWhatsapp.replace(/(\d{3})(\d+)(\d{3})/, '$1****$3')}</p>
+                    <p className="text-gray-900 font-mono">{searchResult.phoneWhatsapp}</p>
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Email:</span>
-                    <p className="text-gray-900">{searchResult.email ? searchResult.email.replace(/(.{2})(.*)(@.*)/, '$1****$3') : 'N/A'}</p>
+                    <p className="text-gray-900">{searchResult.email || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Class Category:</span>

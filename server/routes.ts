@@ -360,14 +360,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log successful export for security audit
       console.log(`📥 CSV EXPORT: ${req.session.adminUser} exported ${dataToExport.length} registrations (category: ${category}) at ${new Date().toISOString()} - IP: ${req.ip}`);
       
+      // Apply data redaction for security - prevent PII exposure even to admins
+      const redactedData = dataToExport.map(reg => redactRegistration(reg));
+      
       res.json({
         success: true,
-        data: dataToExport,
+        data: redactedData,
         meta: {
           exportedBy: req.session.adminUser,
           exportedAt: new Date().toISOString(),
           category: category,
-          recordCount: dataToExport.length
+          recordCount: redactedData.length
         }
       });
     } catch (error) {
@@ -429,10 +432,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log admin search for security audit
       console.log(`🔍 Admin search: ${req.session.adminUser} searched for "${sanitizedSearchTerm}" at ${new Date().toISOString()} - IP: ${req.ip}`);
 
-      // Return REDACTED data for security - server-side masking prevents client bypass
+      // Apply additional security redaction for search results
+      const redactedData = redactRegistration(registration);
+      
+      // Further limit search result data to essential verification info only
+      const searchResultData = {
+        registrationNumber: redactedData.registrationNumber,
+        nameEnglish: redactedData.nameEnglish,
+        nameBangla: redactedData.nameBangla,
+        studentId: redactedData.studentId,
+        class: redactedData.class,
+        section: redactedData.section,
+        bloodGroup: redactedData.bloodGroup,
+        classCategory: redactedData.classCategory,
+        createdAt: redactedData.createdAt,
+        // All PII fields are excluded from search results for security
+        phoneWhatsapp: '***-****-***', // Fully masked for search
+        email: '****@****.***', // Fully masked for search
+        fatherName: 'REDACTED',
+        motherName: 'REDACTED', 
+        presentAddress: 'REDACTED',
+        permanentAddress: 'REDACTED'
+      };
+      
       res.json({
         success: true,
-        data: redactRegistration(registration)
+        data: searchResultData
       });
     } catch (error) {
       console.error("Failed to search registration:", error);

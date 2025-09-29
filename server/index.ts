@@ -86,12 +86,24 @@ if (process.env.NODE_ENV === 'production') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Session middleware with memory store
+// Session middleware with enhanced security warnings
 const MemoryStoreSession = MemoryStore(session);
+
+// SECURITY WARNING for production deployments
+if (process.env.NODE_ENV === 'production') {
+  console.warn('⚠️  SECURITY WARNING: Using MemoryStore for sessions in production!');
+  console.warn('   This is NOT suitable for multi-process VPS deployments.');
+  console.warn('   Sessions will be lost on restart and inconsistent across processes.');
+  console.warn('   RECOMMENDATION: Use Redis or persistent session store for production.');
+  console.warn('   This could be how attackers gained access - session security failure!');
+}
+
+// Enhanced session security configuration
 app.use(session({
   secret: process.env.ADMIN_SESSION_SECRET || 'dev-secret-key-123',
   resave: false,
   saveUninitialized: false,
+  name: 'session_id', // Change default session name for security
   store: new MemoryStoreSession({
     checkPeriod: 86400000 // prune expired entries every 24h
   }),
@@ -99,19 +111,51 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production', // HTTPS in production
     httpOnly: true,
     sameSite: 'strict', // CSRF protection
-    maxAge: 4 * 60 * 60 * 1000 // Reduced to 4 hours for security
-  }
+    maxAge: 2 * 60 * 60 * 1000, // Reduced to 2 hours for enhanced security
+    domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost' // Restrict domain
+  },
+  // Force session ID regeneration more frequently
+  rolling: true // Reset expiration on activity
 }));
 
-// CSRF protection middleware for admin routes
+// Enhanced CSRF protection middleware for admin routes
 app.use('/api/admin', (req, res, next) => {
-  // For state-changing operations, verify origin/referer
+  // For state-changing operations, verify origin/referer with stronger checks
   if (req.method !== 'GET') {
     const origin = req.get('Origin') || req.get('Referer');
     const host = req.get('Host');
+    const xForwardedHost = req.get('X-Forwarded-Host');
+    const xForwardedProto = req.get('X-Forwarded-Proto');
     
-    if (!origin || !origin.includes(host)) {
-      return res.status(403).json({ error: 'CSRF protection: Invalid origin' });
+    // Build expected host list to handle proxy scenarios
+    const expectedHosts = [host];
+    if (xForwardedHost) {
+      expectedHosts.push(xForwardedHost);
+    }
+    
+    // Check if origin is missing
+    if (!origin) {
+      console.log(`⚠️ SECURITY: Missing Origin/Referer header for ${req.method} ${req.path} - IP: ${req.ip}`);
+      return res.status(403).json({ 
+        error: 'CSRF protection: Missing origin header',
+        message: 'Request origin must be specified'
+      });
+    }
+    
+    // Verify origin matches expected hosts
+    const originMatches = expectedHosts.some(expectedHost => {
+      const expectedProto = xForwardedProto || 'http';
+      return origin.includes(expectedHost) || 
+             origin === `${expectedProto}://${expectedHost}` ||
+             origin.startsWith(`${expectedProto}://${expectedHost}/`);
+    });
+    
+    if (!originMatches) {
+      console.log(`⚠️ SECURITY: CSRF attempt detected - Origin: ${origin}, Host: ${host} - IP: ${req.ip}`);
+      return res.status(403).json({ 
+        error: 'CSRF protection: Invalid origin',
+        message: 'Request origin does not match expected host'
+      });
     }
   }
   next();
