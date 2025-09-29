@@ -75,7 +75,6 @@ export default function RegistrationForm({ triggerButton, onSuccess }: Registrat
   });
 
   const onSubmit = (data: RegistrationFormData) => {
-    console.log("Registration form submitted:", data);
     registrationMutation.mutate(data);
   };
 

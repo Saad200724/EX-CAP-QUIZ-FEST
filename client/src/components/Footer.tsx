@@ -32,14 +32,12 @@ export default function Footer() {
   ];
 
   const handleContactClick = (href: string, label: string) => {
-    console.log(`Contact clicked: ${label} - ${href}`);
     if (href.startsWith('mailto:') || href.startsWith('tel:')) {
       window.location.href = href;
     }
   };
 
   const handleSocialClick = (href: string, label: string) => {
-    console.log(`Social link clicked: ${label}`);
     window.open(href, '_blank', 'noopener,noreferrer');
   };
 
@@ -173,14 +171,14 @@ export default function Footer() {
             <div className="hidden sm:flex gap-4 sm:gap-6 text-xs sm:text-sm flex-wrap justify-center">
               <button 
                 className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded whitespace-nowrap"
-                onClick={() => console.log('Privacy Policy clicked')}
+                onClick={() => {}}
                 data-testid="link-privacy"
               >
                 Privacy Policy
               </button>
               <button 
                 className="text-primary-foreground/60 hover:text-primary-foreground transition-colors hover-elevate px-2 py-1 rounded whitespace-nowrap"
-                onClick={() => console.log('Terms of Service clicked')}
+                onClick={() => {}}
                 data-testid="link-terms"
               >
                 Terms of Service

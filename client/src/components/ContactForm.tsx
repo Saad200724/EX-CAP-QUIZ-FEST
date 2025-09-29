@@ -53,7 +53,6 @@ export default function ContactForm({ triggerButton, onSuccess }: ContactFormPro
         title: "Message Sent!",
         description: "Thank you for your inquiry. We'll get back to you as soon as possible.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/contact"] });
       form.reset();
       setIsOpen(false);
       onSuccess?.();
@@ -68,7 +67,6 @@ export default function ContactForm({ triggerButton, onSuccess }: ContactFormPro
   });
 
   const onSubmit = (data: ContactFormData) => {
-    console.log("Contact form submitted:", data);
     contactMutation.mutate(data);
   };
 

@@ -27,7 +27,6 @@ export default function Navbar() {
   }, []);
 
   const handleNavClick = (href: string) => {
-    console.log(`Navigation clicked: ${href}`);
     setIsMenuOpen(false);
     // Smooth scroll to section
     const element = document.querySelector(href);

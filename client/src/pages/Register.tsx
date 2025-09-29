@@ -86,7 +86,6 @@ export default function Register() {
   });
 
   const onSubmit = (data: RegistrationFormData) => {
-    console.log("Registration form submitted:", data);
     registrationMutation.mutate(data);
   };
 
