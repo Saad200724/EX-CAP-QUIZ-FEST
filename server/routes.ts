@@ -360,17 +360,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log successful export for security audit
       console.log(`📥 CSV EXPORT: ${req.session.adminUser} exported ${dataToExport.length} registrations (category: ${category}) at ${new Date().toISOString()} - IP: ${req.ip}`);
       
-      // Apply data redaction for security - prevent PII exposure even to admins
-      const redactedData = dataToExport.map(reg => redactRegistration(reg));
+      // For CSV exports, provide full unmasked data for admin use
+      // Admin has already authenticated with password re-entry for this secure operation
       
       res.json({
         success: true,
-        data: redactedData,
+        data: dataToExport,
         meta: {
           exportedBy: req.session.adminUser,
           exportedAt: new Date().toISOString(),
           category: category,
-          recordCount: redactedData.length
+          recordCount: dataToExport.length
         }
       });
     } catch (error) {
