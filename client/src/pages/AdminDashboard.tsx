@@ -265,6 +265,21 @@ export default function AdminDashboard() {
               Ex-CAP Quiz Fest 2025 - Registration Management & Statistics
             </p>
           </div>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => {
+                if (window.confirm(`Download ALL registrations to CSV?\n\nThis will export ${getCategoryCount("all")} student records with complete information. Ensure you have proper authorization.`)) {
+                  exportToCSV("all");
+                }
+              }}
+              disabled={isLoading || getCategoryCount("all") === 0}
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              data-testid="button-export-all"
+            >
+              <Download className="w-4 h-4" />
+              Download All Registrations
+            </Button>
+          </div>
         </div>
 
         {/* Search Section */}
