@@ -7,6 +7,9 @@ import crypto from "crypto";
 import { createGoogleSheetsService } from "./googleSheets";
 import { createEmailService } from "./emailService";
 
+// Rate limiting storage
+const rateLimits = new Map<string, { count: number; resetTime: number }>();
+
 // Extend Express Request type for admin session
 declare module 'express-session' {
   interface SessionData {
@@ -18,11 +21,44 @@ interface AuthenticatedRequest extends Request {
   session: Express.Session & Partial<Express.SessionData> & { adminUser?: string };
 }
 
-// Admin middleware
+// Rate limiting middleware
+function rateLimit(maxRequests: number, windowMs: number) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+    const key = `${req.route?.path}_${clientIp}`;
+    const now = Date.now();
+    
+    const limit = rateLimits.get(key);
+    
+    if (!limit || now > limit.resetTime) {
+      rateLimits.set(key, { count: 1, resetTime: now + windowMs });
+      return next();
+    }
+    
+    if (limit.count >= maxRequests) {
+      return res.status(429).json({ 
+        error: 'Too many requests', 
+        message: 'Rate limit exceeded. Please try again later.' 
+      });
+    }
+    
+    limit.count++;
+    next();
+  };
+}
+
+// Admin middleware with additional security
 function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   if (!req.session?.adminUser) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+  
+  // Additional session validation
+  if (!req.session.adminUser || req.session.adminUser.length < 3) {
+    req.session.destroy(() => {});
+    return res.status(401).json({ error: 'Invalid session' });
+  }
+  
   next();
 }
 
@@ -33,13 +69,13 @@ function compareCredentials(provided: string, expected: string): boolean {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Admin authentication routes
+  // Admin authentication routes with stronger validation
   const adminLoginSchema = z.object({
-    username: z.string().min(1),
-    password: z.string().min(1)
+    username: z.string().min(3).max(50).trim(),
+    password: z.string().min(6).max(100)
   });
 
-  app.post("/api/admin/login", async (req: AuthenticatedRequest, res) => {
+  app.post("/api/admin/login", rateLimit(5, 15 * 60 * 1000), async (req: AuthenticatedRequest, res) => { // 5 attempts per 15 minutes
     try {
       const { username, password } = adminLoginSchema.parse(req.body);
       
@@ -69,12 +105,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Set session
-      req.session.adminUser = username;
-      
-      res.json({ 
-        success: true,
-        message: 'Login successful'
+      // Regenerate session ID for security (prevents session fixation)
+      req.session.regenerate((err) => {
+        if (err) {
+          console.error('Session regeneration error:', err);
+          return res.status(500).json({ error: 'Login failed' });
+        }
+        
+        // Set session
+        req.session.adminUser = username;
+        
+        res.json({ 
+          success: true,
+          message: 'Login successful'
+        });
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -106,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Protected admin data routes
-  app.get("/api/admin/registrations", requireAdmin, async (req, res) => {
+  app.get("/api/admin/registrations", requireAdmin, rateLimit(10, 60 * 1000), async (req, res) => { // 10 requests per minute
     try {
       // Prevent caching to avoid 304 responses that frontend treats as errors
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -127,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/registrations/search/:searchTerm", requireAdmin, async (req, res) => {
+  app.get("/api/admin/registrations/search/:searchTerm", requireAdmin, rateLimit(20, 60 * 1000), async (req, res) => { // 20 searches per minute
     try {
       const { searchTerm } = req.params;
       
@@ -143,12 +187,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Input sanitization
+      const sanitizedSearchTerm = searchTerm.replace(/[^a-zA-Z0-9-]/g, '');
+      if (sanitizedSearchTerm.length < 2) {
+        return res.status(400).json({
+          error: "Validation error",
+          message: "Search term must be at least 2 characters long"
+        });
+      }
+      
       // First try searching by registration number
-      let registration = await storage.getRegistrationByRegistrationNumber(searchTerm);
+      let registration = await storage.getRegistrationByRegistrationNumber(sanitizedSearchTerm);
       
       // If not found by registration number, try searching by student ID
       if (!registration) {
-        registration = await storage.getRegistrationByStudentId(searchTerm);
+        registration = await storage.getRegistrationByStudentId(sanitizedSearchTerm);
       }
       
       if (!registration) {
@@ -215,8 +268,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Registration routes
-  app.post("/api/registrations", async (req, res) => {
+  // Registration routes with rate limiting
+  app.post("/api/registrations", rateLimit(3, 60 * 1000), async (req, res) => { // 3 registrations per minute per IP
     try {
       // Validate request body
       const validatedData = insertRegistrationSchema.parse(req.body);
@@ -288,8 +341,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
-  // Contact form routes
-  app.post("/api/contact", async (req, res) => {
+  // Contact form routes with rate limiting
+  app.post("/api/contact", rateLimit(5, 60 * 1000), async (req, res) => { // 5 contact submissions per minute
     try {
       // Validate request body
       const validatedData = insertContactSubmissionSchema.parse(req.body);

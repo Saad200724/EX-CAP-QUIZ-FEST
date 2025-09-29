@@ -37,6 +37,8 @@ if (missingEnvVars.length > 0) {
 }
 
 const app = express();
+// Trust proxy for rate limiting behind reverse proxy
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -50,11 +52,26 @@ app.use(session({
     checkPeriod: 86400000 // prune expired entries every 24h
   }),
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === 'production', // HTTPS in production
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    sameSite: 'strict', // CSRF protection
+    maxAge: 4 * 60 * 60 * 1000 // Reduced to 4 hours for security
   }
 }));
+
+// CSRF protection middleware for admin routes
+app.use('/api/admin', (req, res, next) => {
+  // For state-changing operations, verify origin/referer
+  if (req.method !== 'GET') {
+    const origin = req.get('Origin') || req.get('Referer');
+    const host = req.get('Host');
+    
+    if (!origin || !origin.includes(host)) {
+      return res.status(403).json({ error: 'CSRF protection: Invalid origin' });
+    }
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();

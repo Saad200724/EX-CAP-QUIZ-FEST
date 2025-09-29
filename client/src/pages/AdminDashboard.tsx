@@ -21,36 +21,31 @@ export default function AdminDashboard() {
   const [searchResult, setSearchResult] = useState<Registration | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchResult, setShowSearchResult] = useState(false);
+  const [searchCount, setSearchCount] = useState(0);
+  const [lastSearchTime, setLastSearchTime] = useState(0);
 
-  // Fetch registrations data
+  // Only fetch registration statistics, not full data
   const {
-    data: registrationsResponse,
+    data: statsResponse,
     isLoading,
     error,
-  } = useQuery<{ success: boolean; data: Registration[] }>({
-    queryKey: ["/api/admin/registrations"],
+  } = useQuery<{ success: boolean; data: { total: number; categoryBreakdown: Record<string, number> } }>({
+    queryKey: ["/api/registration-stats"],
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
-  const registrations: Registration[] = registrationsResponse?.data || [];
+  const stats = statsResponse?.data || { total: 0, categoryBreakdown: {} };
 
-  // Filter registrations based on selected category
-  const getFilteredRegistrations = (category: string) => {
-    if (category === "all") return registrations;
-    if (category === "09-12") {
-      return registrations.filter(r => ["09-10", "11-12"].includes(r.classCategory));
-    }
-    return registrations.filter(r => r.classCategory === category);
-  };
-
-  const filteredRegistrations = getFilteredRegistrations(selectedCategory);
-
-  // Get counts for each category
+  // Get counts for each category from stats
   const getCategoryCount = (category: string) => {
-    return getFilteredRegistrations(category).length;
+    if (category === "all") return stats.total;
+    if (category === "09-12") {
+      return (stats.categoryBreakdown["09-10"] || 0) + (stats.categoryBreakdown["11-12"] || 0);
+    }
+    return stats.categoryBreakdown[category] || 0;
   };
 
-  // Search function
+  // Search function with rate limiting
   const searchByRegistrationOrStudentId = async () => {
     if (!searchTerm.trim()) {
       toast({
@@ -61,7 +56,21 @@ export default function AdminDashboard() {
       return;
     }
 
+    // Rate limiting: Max 10 searches per minute
+    const now = Date.now();
+    if (now - lastSearchTime < 6000 && searchCount >= 10) { // 6 seconds between searches if over 10 searches
+      toast({
+        title: "Rate Limit Exceeded",
+        description: "Please wait before searching again. Too many search attempts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSearching(true);
+    setSearchCount(prev => prev + 1);
+    setLastSearchTime(now);
+    
     try {
       const response = await apiRequest("GET", `/api/admin/registrations/search/${encodeURIComponent(searchTerm.trim())}`);
       const data = await response.json();
@@ -69,7 +78,7 @@ export default function AdminDashboard() {
       setShowSearchResult(true);
       toast({
         title: "Search Successful",
-        description: `Found registration for ${data.data.nameEnglish}`,
+        description: `Found registration for student`,
       });
     } catch (error: any) {
       setSearchResult(null);
@@ -98,77 +107,20 @@ export default function AdminDashboard() {
     setShowSearchResult(false);
   };
 
-  // CSV Export function
+  // Reset rate limiting every minute
+  useState(() => {
+    const interval = setInterval(() => {
+      setSearchCount(0);
+    }, 60000); // Reset every minute
+    return () => clearInterval(interval);
+  });
+
+  // DISABLED: CSV Export removed for security
   const exportToCSV = (category: string = "all") => {
-    const dataToExport = getFilteredRegistrations(category);
-    
-    if (dataToExport.length === 0) {
-      toast({
-        title: "No Data",
-        description: `No registrations available to export for ${category === "all" ? "all categories" : `Class ${category}`}.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const headers = [
-      "Registration Date",
-      "Registration Number",
-      "Name (English)",
-      "Name (Bangla)",
-      "Father's Name",
-      "Mother's Name",
-      "Student ID",
-      "Class",
-      "Section", 
-      "Blood Group",
-      "Phone (WhatsApp)",
-      "Email",
-      "Present Address",
-      "Permanent Address",
-      "Class Category"
-    ];
-
-    const csvData = dataToExport.map(reg => [
-      formatDate(reg.createdAt),
-      reg.registrationNumber || 'N/A',
-      reg.nameEnglish,
-      reg.nameBangla,
-      reg.fatherName,
-      reg.motherName,
-      reg.studentId,
-      reg.class,
-      reg.section,
-      reg.bloodGroup,
-      reg.phoneWhatsapp,
-      reg.email || '',
-      reg.presentAddress,
-      reg.permanentAddress,
-      reg.classCategory
-    ]);
-
-    const csvContent = [headers, ...csvData]
-      .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
-      .join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    
-    const fileName = category === "all" 
-      ? `quiz-fest-all-registrations-${new Date().toISOString().split('T')[0]}.csv`
-      : `quiz-fest-class-${category}-registrations-${new Date().toISOString().split('T')[0]}.csv`;
-    
-    link.setAttribute('download', fileName);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
     toast({
-      title: "Export Successful",
-      description: `Exported ${dataToExport.length} registrations for ${category === "all" ? "all categories" : `Class ${category}`} to CSV file.`,
+      title: "Export Disabled",
+      description: "CSV export has been disabled for security reasons. Contact system administrator if you need data exports.",
+      variant: "destructive",
     });
   };
 
@@ -265,7 +217,7 @@ export default function AdminDashboard() {
               )}
             </div>
 
-            {/* Search Result */}
+            {/* Search Result - With Data Masking */}
             {showSearchResult && searchResult && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <h4 className="text-lg font-semibold text-green-800 mb-3">Student Found</h4>
@@ -273,10 +225,6 @@ export default function AdminDashboard() {
                   <div>
                     <span className="font-medium text-gray-600">Name (English):</span>
                     <p className="text-gray-900">{searchResult.nameEnglish}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Name (Bangla):</span>
-                    <p className="text-gray-900">{searchResult.nameBangla}</p>
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Student ID:</span>
@@ -295,28 +243,12 @@ export default function AdminDashboard() {
                     <p className="text-gray-900">{searchResult.bloodGroup}</p>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Father's Name:</span>
-                    <p className="text-gray-900">{searchResult.fatherName}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Mother's Name:</span>
-                    <p className="text-gray-900">{searchResult.motherName}</p>
-                  </div>
-                  <div>
                     <span className="font-medium text-gray-600">Phone/WhatsApp:</span>
-                    <p className="text-gray-900">{searchResult.phoneWhatsapp}</p>
+                    <p className="text-gray-900 font-mono">{searchResult.phoneWhatsapp.replace(/(\d{3})(\d+)(\d{3})/, '$1****$3')}</p>
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Email:</span>
-                    <p className="text-gray-900">{searchResult.email || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Present Address:</span>
-                    <p className="text-gray-900">{searchResult.presentAddress}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Permanent Address:</span>
-                    <p className="text-gray-900">{searchResult.permanentAddress}</p>
+                    <p className="text-gray-900">{searchResult.email ? searchResult.email.replace(/(.{2})(.*)(@.*)/, '$1****$3') : 'N/A'}</p>
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Class Category:</span>
@@ -326,6 +258,11 @@ export default function AdminDashboard() {
                     <span className="font-medium text-gray-600">Registration Date:</span>
                     <p className="text-gray-900">{formatDate(searchResult.createdAt)}</p>
                   </div>
+                </div>
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                  <p className="text-xs text-yellow-700">
+                    🔒 <strong>Privacy Protection:</strong> Sensitive information like full names, addresses, and contact details are masked for security. Only essential verification data is shown.
+                  </p>
                 </div>
               </div>
             )}
@@ -356,9 +293,9 @@ export default function AdminDashboard() {
                       e.stopPropagation();
                       exportToCSV(category.id);
                     }}
-                    disabled={isLoading || getCategoryCount(category.id) === 0}
-                    className="h-6 w-6 p-0"
-                    title={`Export ${category.label} to CSV`}
+                    disabled={true}
+                    className="h-6 w-6 p-0 opacity-50"
+                    title="Export disabled for security"
                   >
                     <Download className="w-3 h-3" />
                   </Button>
@@ -383,7 +320,7 @@ export default function AdminDashboard() {
           <span className="text-sm text-gray-600">
             Currently showing: <strong>
               {categories.find(c => c.id === selectedCategory)?.label || "All Students"}
-            </strong> ({filteredRegistrations.length} registrations)
+            </strong> ({getCategoryCount(selectedCategory)} registrations)
           </span>
           {selectedCategory !== "all" && (
             <Button
@@ -397,138 +334,46 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* Registrations Table */}
-        <Card>
+        {/* Security Notice */}
+        <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-yellow-800">
               <Users className="w-5 h-5" />
-              Student Registrations
-              {selectedCategory !== "all" && (
-                <Badge variant="outline" className="ml-2">
-                  {categories.find(c => c.id === selectedCategory)?.label}
-                </Badge>
-              )}
+              Registration Data Access Restricted
             </CardTitle>
-            <CardDescription>
-              {selectedCategory === "all" 
-                ? "All students who have registered for the Ex-CAP Quiz Fest 2025"
-                : `Students registered in ${categories.find(c => c.id === selectedCategory)?.label}`
-              }
+            <CardDescription className="text-yellow-700">
+              For security and privacy protection, bulk registration data viewing has been disabled. 
+              Use the search function above to find specific students by Registration ID or Student ID.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-16 w-full" />
-                ))}
+            <div className="text-center py-8">
+              <div className="text-yellow-600 mb-4">
+                <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <p className="font-medium">Registration Summary</p>
               </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Registration Date</TableHead>
-                      <TableHead>Registration Number</TableHead>
-                      <TableHead>Name (English)</TableHead>
-                      <TableHead>Name (Bangla)</TableHead>
-                      <TableHead>Father's Name</TableHead>
-                      <TableHead>Mother's Name</TableHead>
-                      <TableHead>Student ID</TableHead>
-                      <TableHead>Class</TableHead>
-                      <TableHead>Section</TableHead>
-                      <TableHead>Blood Group</TableHead>
-                      <TableHead>Phone (WhatsApp)</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Present Address</TableHead>
-                      <TableHead>Permanent Address</TableHead>
-                      <TableHead>Class Category</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredRegistrations.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={15} className="text-center py-8 text-gray-500">
-                          {selectedCategory === "all" 
-                            ? "No students have registered yet. When students fill out the registration form, they will appear here."
-                            : `No students have registered for ${categories.find(c => c.id === selectedCategory)?.label} yet.`
-                          }
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredRegistrations.map((registration: Registration) => (
-                        <TableRow key={registration.id} data-testid={`row-registration-${registration.id}`}>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">{formatDate(registration.createdAt)}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="font-mono text-xs">
-                              {registration.registrationNumber || 'N/A'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            <span className="text-sm">{registration.nameEnglish}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm">{registration.nameBangla}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm">{registration.fatherName}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm">{registration.motherName}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm font-mono">{registration.studentId}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm">{registration.class}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm">{registration.section}</span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">
-                              {registration.bloodGroup}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Phone className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">{registration.phoneWhatsapp}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Mail className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">{registration.email || 'N/A'}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm max-w-32 truncate" title={registration.presentAddress}>
-                              {registration.presentAddress}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-sm max-w-32 truncate" title={registration.permanentAddress}>
-                              {registration.permanentAddress}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">
-                              Class {registration.classCategory}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="bg-white rounded-lg p-3 border">
+                  <p className="font-semibold text-gray-900">{getCategoryCount("all")}</p>
+                  <p className="text-gray-600">Total Students</p>
+                </div>
+                <div className="bg-white rounded-lg p-3 border">
+                  <p className="font-semibold text-gray-900">{getCategoryCount("03-05")}</p>
+                  <p className="text-gray-600">Class 03-05</p>
+                </div>
+                <div className="bg-white rounded-lg p-3 border">
+                  <p className="font-semibold text-gray-900">{getCategoryCount("06-08")}</p>
+                  <p className="text-gray-600">Class 06-08</p>
+                </div>
+                <div className="bg-white rounded-lg p-3 border">
+                  <p className="font-semibold text-gray-900">{getCategoryCount("09-10") + getCategoryCount("11-12")}</p>
+                  <p className="text-gray-600">Class 09-12</p>
+                </div>
               </div>
-            )}
+              <p className="text-yellow-600 mt-4 text-sm">
+                💡 To view specific student details, use the search function above.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
