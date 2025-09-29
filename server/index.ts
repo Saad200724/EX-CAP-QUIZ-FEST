@@ -110,9 +110,9 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS in production
     httpOnly: true,
-    sameSite: 'strict', // CSRF protection
+    sameSite: 'lax', // Allow cross-site requests while maintaining security
     maxAge: 2 * 60 * 60 * 1000, // Reduced to 2 hours for enhanced security
-    domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost' // Restrict domain
+    // Remove domain restriction to allow host-only cookies
   },
   // Force session ID regeneration more frequently
   rolling: true // Reset expiration on activity
