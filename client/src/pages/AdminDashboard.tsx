@@ -115,12 +115,33 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   });
 
-  // Secure CSV Export function with admin verification
+  // Secure CSV Export function with admin verification and password re-entry
   const exportToCSV = async (category: string = "all") => {
     try {
-      // Fetch full registration data for export (admin-only endpoint)
-      const response = await apiRequest("GET", "/api/admin/registrations");
+      // Require password re-entry for security
+      const password = window.prompt(
+        "⚠️ SECURITY VERIFICATION ⚠️\n\nYou are about to export sensitive student data.\n\nPlease re-enter your admin password to confirm:"
+      );
+      
+      if (!password) {
+        toast({
+          title: "Export Cancelled",
+          description: "Password verification is required to export data.",
+        });
+        return;
+      }
+      
+      // Fetch full registration data for export with password verification
+      const response = await apiRequest("POST", "/api/admin/export/csv", {
+        password,
+        category
+      });
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Export failed");
+      }
+      
       const allRegistrations = data.data || [];
       
       // Filter data based on category
