@@ -264,7 +264,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json({
         success: true,
         message: "Registration created successfully",
-        data: registration
+        data: {
+          registrationNumber: registration.registrationNumber,
+          message: "Your registration has been confirmed. You will receive a confirmation email shortly."
+        }
       });
     } catch (error) {
       console.error("Registration creation error:", error);
@@ -297,7 +300,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json({
         success: true,
         message: "Contact submission created successfully",
-        data: submission
+        data: {
+          message: "Your message has been received. We will get back to you soon."
+        }
       });
     } catch (error) {
       console.error("Contact submission creation error:", error);
