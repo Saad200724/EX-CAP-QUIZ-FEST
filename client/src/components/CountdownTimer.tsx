@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, TrendingUp } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import type { Registration } from "@shared/schema";
 
 interface CountdownTimerProps {
   targetDate?: string;
@@ -18,9 +17,20 @@ export default function CountdownTimer({ targetDate = "2025-09-27T22:00:00+06:00
   });
   const [showLiveCount, setShowLiveCount] = useState(false);
 
-  // Fetch registrations data for live count
-  const { data: registrationsResponse } = useQuery<{ success: boolean; data: Registration[] }>({
-    queryKey: ["/api/registrations"],
+  // Fetch registration statistics for live count (no personal data)
+  const { data: statsResponse } = useQuery<{ 
+    success: boolean; 
+    data: { 
+      total: number; 
+      categoryBreakdown: { 
+        "03-05": number; 
+        "06-08": number; 
+        "09-10": number; 
+        "11-12": number; 
+      } 
+    } 
+  }>({
+    queryKey: ["/api/registration-stats"],
     refetchInterval: 10000, // Refresh every 10 seconds for live updates
     enabled: showLiveCount, // Only fetch when we need to show live count
   });
@@ -48,15 +58,16 @@ export default function CountdownTimer({ targetDate = "2025-09-27T22:00:00+06:00
     return () => clearInterval(timer);
   }, [targetDate]);
 
-  const registrations = registrationsResponse?.data || [];
+  const stats = statsResponse?.data;
   
-  // Get category counts
+  // Get category counts from stats (no personal data)
   const getCategoryCount = (category: string) => {
-    if (category === "03-05") return registrations.filter(r => r.classCategory === "03-05").length;
-    if (category === "06-08") return registrations.filter(r => r.classCategory === "06-08").length;
-    if (category === "09-10") return registrations.filter(r => r.classCategory === "09-10").length;
-    if (category === "11-12") return registrations.filter(r => r.classCategory === "11-12").length;
-    return registrations.length;
+    if (!stats) return 0;
+    if (category === "03-05") return stats.categoryBreakdown["03-05"];
+    if (category === "06-08") return stats.categoryBreakdown["06-08"];
+    if (category === "09-10") return stats.categoryBreakdown["09-10"];
+    if (category === "11-12") return stats.categoryBreakdown["11-12"];
+    return stats.total;
   };
 
   if (showLiveCount) {

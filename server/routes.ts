@@ -186,6 +186,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  // Public statistics endpoint - only returns counts, no personal data
+  app.get("/api/registration-stats", async (req, res) => {
+    try {
+      const registrations = await storage.getRegistrations();
+      
+      // Only return statistical data, no personal information
+      const stats = {
+        total: registrations.length,
+        categoryBreakdown: {
+          "03-05": registrations.filter(r => r.classCategory === "03-05").length,
+          "06-08": registrations.filter(r => r.classCategory === "06-08").length,
+          "09-10": registrations.filter(r => r.classCategory === "09-10").length,
+          "11-12": registrations.filter(r => r.classCategory === "11-12").length,
+        }
+      };
+      
+      res.json({
+        success: true,
+        data: stats
+      });
+    } catch (error) {
+      console.error("Failed to fetch registration statistics:", error);
+      res.status(500).json({
+        error: "Internal server error",
+        message: "Failed to fetch registration statistics"
+      });
+    }
+  });
+
   // Registration routes
   app.post("/api/registrations", async (req, res) => {
     try {
@@ -255,21 +284,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/registrations", async (req, res) => {
-    try {
-      const registrations = await storage.getRegistrations();
-      res.json({
-        success: true,
-        data: registrations
-      });
-    } catch (error) {
-      console.error("Failed to fetch registrations:", error);
-      res.status(500).json({
-        error: "Internal server error",
-        message: "Failed to fetch registrations"
-      });
-    }
-  });
 
   // Contact form routes
   app.post("/api/contact", async (req, res) => {
@@ -303,21 +317,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/contact", async (req, res) => {
-    try {
-      const submissions = await storage.getContactSubmissions();
-      res.json({
-        success: true,
-        data: submissions
-      });
-    } catch (error) {
-      console.error("Failed to fetch contact submissions:", error);
-      res.status(500).json({
-        error: "Internal server error",
-        message: "Failed to fetch contact submissions"
-      });
-    }
-  });
 
   const httpServer = createServer(app);
 

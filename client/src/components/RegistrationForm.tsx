@@ -60,7 +60,7 @@ export default function RegistrationForm({ triggerButton, onSuccess }: Registrat
         title: "Registration Successful!",
         description: "We've received your registration. You'll receive a confirmation email shortly.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/registrations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/registration-stats"] });
       form.reset();
       setIsOpen(false);
       onSuccess?.();
