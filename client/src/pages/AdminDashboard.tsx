@@ -115,13 +115,104 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   });
 
-  // DISABLED: CSV Export removed for security
-  const exportToCSV = (category: string = "all") => {
-    toast({
-      title: "Export Disabled",
-      description: "CSV export has been disabled for security reasons. Contact system administrator if you need data exports.",
-      variant: "destructive",
-    });
+  // Secure CSV Export function with admin verification
+  const exportToCSV = async (category: string = "all") => {
+    try {
+      // Fetch full registration data for export (admin-only endpoint)
+      const response = await apiRequest("GET", "/api/admin/registrations");
+      const data = await response.json();
+      const allRegistrations = data.data || [];
+      
+      // Filter data based on category
+      let dataToExport = allRegistrations;
+      if (category !== "all") {
+        if (category === "09-12") {
+          dataToExport = allRegistrations.filter((r: any) => ["09-10", "11-12"].includes(r.classCategory));
+        } else {
+          dataToExport = allRegistrations.filter((r: any) => r.classCategory === category);
+        }
+      }
+      
+      if (dataToExport.length === 0) {
+        toast({
+          title: "No Data",
+          description: `No registrations available to export for ${category === "all" ? "all categories" : `Class ${category}`}.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const headers = [
+        "Registration Date",
+        "Registration Number",
+        "Name (English)",
+        "Name (Bangla)",
+        "Father's Name",
+        "Mother's Name",
+        "Student ID",
+        "Class",
+        "Section", 
+        "Blood Group",
+        "Phone (WhatsApp)",
+        "Email",
+        "Present Address",
+        "Permanent Address",
+        "Class Category"
+      ];
+
+      const csvData = dataToExport.map((reg: any) => [
+        formatDate(reg.createdAt),
+        reg.registrationNumber || 'N/A',
+        reg.nameEnglish,
+        reg.nameBangla,
+        reg.fatherName,
+        reg.motherName,
+        reg.studentId,
+        reg.class,
+        reg.section,
+        reg.bloodGroup,
+        reg.phoneWhatsapp,
+        reg.email || '',
+        reg.presentAddress,
+        reg.permanentAddress,
+        reg.classCategory
+      ]);
+
+      const csvContent = [headers, ...csvData]
+        .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      
+      const fileName = category === "all" 
+        ? `quiz-fest-all-registrations-${new Date().toISOString().split('T')[0]}.csv`
+        : `quiz-fest-class-${category}-registrations-${new Date().toISOString().split('T')[0]}.csv`;
+      
+      link.setAttribute('download', fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export Successful",
+        description: `Exported ${dataToExport.length} registrations for ${category === "all" ? "all categories" : `Class ${category}`} to CSV file.`,
+      });
+      
+      // Log the export action for security audit
+      console.log(`Admin CSV export: ${category} category, ${dataToExport.length} records at ${new Date().toISOString()}`);
+      
+    } catch (error: any) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export data. Please ensure you have admin permissions and try again.",
+        variant: "destructive",
+      });
+      console.error('CSV export error:', error);
+    }
   };
 
   const formatDate = (dateString: string | Date) => {
@@ -291,11 +382,13 @@ export default function AdminDashboard() {
                     variant="outline"
                     onClick={(e) => {
                       e.stopPropagation();
-                      exportToCSV(category.id);
+                      if (window.confirm(`Export ${category.label} data to CSV?\n\nThis will download sensitive student information. Ensure you have proper authorization.`)) {
+                        exportToCSV(category.id);
+                      }
                     }}
-                    disabled={true}
-                    className="h-6 w-6 p-0 opacity-50"
-                    title="Export disabled for security"
+                    disabled={isLoading || getCategoryCount(category.id) === 0}
+                    className="h-6 w-6 p-0 hover:bg-blue-100"
+                    title={`Export ${category.label} to CSV (Admin Only)`}
                   >
                     <Download className="w-3 h-3" />
                   </Button>

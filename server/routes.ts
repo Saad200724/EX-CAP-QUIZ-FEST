@@ -150,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Protected admin data routes
-  app.get("/api/admin/registrations", requireAdmin, rateLimit(10, 60 * 1000), async (req, res) => { // 10 requests per minute
+  app.get("/api/admin/registrations", requireAdmin, rateLimit(5, 60 * 1000), async (req, res) => { // 5 requests per minute (reduced for security)
     try {
       // Prevent caching to avoid 304 responses that frontend treats as errors
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -158,6 +158,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.setHeader('Expires', '0');
       
       const registrations = await storage.getRegistrations();
+      
+      // Log admin data access for security audit
+      console.log(`🔍 Admin data access: ${req.session.adminUser} accessed full registrations data at ${new Date().toISOString()} - IP: ${req.ip}`);
+      
       res.json({
         success: true,
         data: registrations
