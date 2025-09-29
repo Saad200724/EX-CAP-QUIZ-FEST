@@ -74,7 +74,6 @@ export default function AdminDashboard() {
     } catch (error: any) {
       setSearchResult(null);
       setShowSearchResult(false);
-      console.error("Search error:", error);
       if (error.message?.includes("404")) {
         toast({
           title: "No Registration Found",
