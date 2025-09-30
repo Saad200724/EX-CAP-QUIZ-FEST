@@ -48,10 +48,20 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Database
-- **Supabase Database**: PostgreSQL-compatible serverless database for production
+- **PostgreSQL Database**: Works with any PostgreSQL database (Supabase, Neon, or self-hosted)
 - **Connection**: Direct PostgreSQL connection using pg library with SSL
+- **Pool Configuration**: Production-ready connection pooling with automatic retry and error handling
 - **Migrations**: Drizzle Kit for database schema migrations and management
+- **Session Storage**: Uses connect-pg-simple for PostgreSQL-backed sessions in production (MemoryStore in development)
 - **Status**: Connected and operational with synchronized schema
+
+## VPS Deployment
+- **Environment**: Supports deployment to any VPS server (Ubuntu, Debian, etc.)
+- **Proxy Support**: Configured to work behind Nginx, Apache, or cloud load balancers
+- **Session Management**: Production uses PostgreSQL for session persistence (no MemoryStore issues)
+- **Security**: Proper SSL handling, HTTPS redirects, HSTS headers, and proxy trust configuration
+- **Documentation**: Comprehensive deployment guide in DEPLOYMENT.md
+- **Environment Variables**: Uses .env in development, system environment variables in production
 
 ## UI Framework
 - **Radix UI**: Headless component primitives for accessibility and functionality
