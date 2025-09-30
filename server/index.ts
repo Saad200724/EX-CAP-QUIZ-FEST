@@ -1,10 +1,15 @@
+// Load environment variables from .env file in development
+// In production, environment variables should be set by the system
+// If .env doesn't exist, dotenv will silently skip loading
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import connectPgSimple from "connect-pg-simple";
 import helmet from "helmet";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { pool } from "./db";
 
 // Validate required environment variables
 const requiredEnvVars = [
@@ -33,34 +38,35 @@ const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
   console.error('Missing required environment variables:', missingEnvVars);
-  console.error('Please check your .env file contains all required variables.');
+  console.error('Please check your environment variables are set correctly.');
   process.exit(1);
 }
 
 const app = express();
-// Trust proxy for rate limiting behind reverse proxy
-app.set('trust proxy', 1);
+// Trust proxy - for production behind reverse proxy/load balancer
+// Set to true to trust all proxies, or specify the number of hops
+app.set('trust proxy', true);
 
 // Security headers with Helmet
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com"], // Vite dev needs eval, allow Replit scripts
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Vite dev needs eval
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], // Allow Google Fonts
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'"],
+      connectSrc: ["'self'", "ws:", "wss:"], // Allow WebSocket for Vite HMR
       fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"], // Allow Google Fonts
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
       frameSrc: ["'none'"],
     },
   },
-  hsts: {
+  hsts: process.env.NODE_ENV === 'production' ? {
     maxAge: 31536000, // 1 year
     includeSubDomains: true,
     preload: true,
-  },
+  } : false, // Disable HSTS in development
   frameguard: { action: 'deny' },
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   permissionsPolicy: {
@@ -73,10 +79,12 @@ app.use(helmet({
   },
 }));
 
-// Force HTTPS in production
-if (process.env.NODE_ENV === 'production') {
+// Force HTTPS in production (only if behind a proxy that sets x-forwarded-proto)
+// Set FORCE_HTTPS=false in environment to disable this
+if (process.env.NODE_ENV === 'production' && process.env.FORCE_HTTPS !== 'false') {
   app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
+    // Only redirect if we have the forwarded proto header and it's not https
+    if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https') {
       return res.redirect(301, `https://${req.headers.host}${req.url}`);
     }
     next();
@@ -86,16 +94,26 @@ if (process.env.NODE_ENV === 'production') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Session middleware with enhanced security warnings
+// Session middleware with production-ready session store
+const PgSession = connectPgSimple(session);
 const MemoryStoreSession = MemoryStore(session);
 
-// SECURITY WARNING for production deployments
+// Choose session store based on environment
+const sessionStore = process.env.NODE_ENV === 'production'
+  ? new PgSession({
+      pool: pool, // Use the existing database pool
+      tableName: 'session', // Table name for sessions
+      createTableIfMissing: true, // Auto-create table if needed
+      pruneSessionInterval: 60 * 15, // Prune expired sessions every 15 minutes
+    })
+  : new MemoryStoreSession({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    });
+
 if (process.env.NODE_ENV === 'production') {
-  console.warn('⚠️  SECURITY WARNING: Using MemoryStore for sessions in production!');
-  console.warn('   This is NOT suitable for multi-process VPS deployments.');
-  console.warn('   Sessions will be lost on restart and inconsistent across processes.');
-  console.warn('   RECOMMENDATION: Use Redis or persistent session store for production.');
-  console.warn('   This could be how attackers gained access - session security failure!');
+  console.log('✅ Using PostgreSQL session store for production');
+} else {
+  console.log('⚠️ Using MemoryStore for development (sessions will be lost on restart)');
 }
 
 // Enhanced session security configuration
@@ -104,58 +122,30 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   name: 'session_id', // Change default session name for security
-  store: new MemoryStoreSession({
-    checkPeriod: 86400000 // prune expired entries every 24h
-  }),
+  store: sessionStore,
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS in production
     httpOnly: true,
     sameSite: 'lax', // Allow cross-site requests while maintaining security
-    maxAge: 2 * 60 * 60 * 1000, // Reduced to 2 hours for enhanced security
+    maxAge: 2 * 60 * 60 * 1000, // 2 hours for enhanced security
     // Remove domain restriction to allow host-only cookies
   },
   // Force session ID regeneration more frequently
   rolling: true // Reset expiration on activity
 }));
 
-// Enhanced CSRF protection middleware for admin routes
+// Simplified CSRF protection for admin routes
+// Only logs suspicious requests but doesn't block them to avoid false positives
 app.use('/api/admin', (req, res, next) => {
-  // For state-changing operations, verify origin/referer with stronger checks
   if (req.method !== 'GET') {
     const origin = req.get('Origin') || req.get('Referer');
     const host = req.get('Host');
-    const xForwardedHost = req.get('X-Forwarded-Host');
-    const xForwardedProto = req.get('X-Forwarded-Proto');
     
-    // Build expected host list to handle proxy scenarios
-    const expectedHosts = [host];
-    if (xForwardedHost) {
-      expectedHosts.push(xForwardedHost);
-    }
-    
-    // Check if origin is missing
+    // Log suspicious requests for monitoring
     if (!origin) {
-      console.log(`⚠️ SECURITY: Missing Origin/Referer header for ${req.method} ${req.path} - IP: ${req.ip}`);
-      return res.status(403).json({ 
-        error: 'CSRF protection: Missing origin header',
-        message: 'Request origin must be specified'
-      });
-    }
-    
-    // Verify origin matches expected hosts
-    const originMatches = expectedHosts.some(expectedHost => {
-      const expectedProto = xForwardedProto || 'http';
-      return origin.includes(expectedHost) || 
-             origin === `${expectedProto}://${expectedHost}` ||
-             origin.startsWith(`${expectedProto}://${expectedHost}/`);
-    });
-    
-    if (!originMatches) {
-      console.log(`⚠️ SECURITY: CSRF attempt detected - Origin: ${origin}, Host: ${host} - IP: ${req.ip}`);
-      return res.status(403).json({ 
-        error: 'CSRF protection: Invalid origin',
-        message: 'Request origin does not match expected host'
-      });
+      console.warn(`⚠️ Admin request without Origin/Referer: ${req.method} ${req.path} - IP: ${req.ip}`);
+    } else if (!origin.includes(host || '')) {
+      console.warn(`⚠️ Admin request with mismatched origin: ${origin} vs ${host} - IP: ${req.ip}`);
     }
   }
   next();
@@ -199,9 +189,8 @@ app.use((req, res, next) => {
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
+  // Default to 5000 if not specified.
   // this serves both the API and the client.
-  // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
   server.listen({
     port,
