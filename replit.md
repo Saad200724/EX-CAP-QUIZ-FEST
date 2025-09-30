@@ -8,6 +8,26 @@ The project features a modern, responsive design with a purple-pink gradient the
 
 Preferred communication style: Simple, everyday language.
 
+# Recent Changes
+
+## September 30, 2025 - Replit Environment Setup
+- Configured the application to run in Replit environment
+- Set up workflow to run on port 5000 with webview output
+- Verified Vite dev server configured with `host: "0.0.0.0"` and `allowedHosts: true` for Replit proxy support
+- Database schema already synchronized (PostgreSQL via external connection)
+- Configured deployment with autoscale target for production
+- Application successfully running with full functionality
+
+## Required Environment Variables
+The following environment variables must be set in Replit Secrets for the application to work:
+- `DATABASE_URL` - PostgreSQL connection string (already set)
+- `ADMIN_USERNAME` - Admin login username (needs to be set by user)
+- `ADMIN_PASSWORD` - Admin login password (needs to be set by user)
+- `ADMIN_SESSION_SECRET` - Session secret key for admin auth (needs to be set by user)
+
+Optional email service variables:
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `FROM_EMAIL` - For email notifications
+
 # System Architecture
 
 ## Frontend Architecture
