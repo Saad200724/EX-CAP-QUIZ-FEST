@@ -4,7 +4,6 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-import MemoryStore from "memorystore";
 import connectPgSimple from "connect-pg-simple";
 import helmet from "helmet";
 import { registerRoutes } from "./routes";
@@ -94,27 +93,18 @@ if (process.env.NODE_ENV === 'production' && process.env.FORCE_HTTPS !== 'false'
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Session middleware with production-ready session store
+// Session middleware with Supabase PostgreSQL session store
 const PgSession = connectPgSimple(session);
-const MemoryStoreSession = MemoryStore(session);
 
-// Choose session store based on environment
-const sessionStore = process.env.NODE_ENV === 'production'
-  ? new PgSession({
-      pool: pool, // Use the existing database pool
-      tableName: 'session', // Table name for sessions
-      createTableIfMissing: true, // Auto-create table if needed
-      pruneSessionInterval: 60 * 15, // Prune expired sessions every 15 minutes
-    })
-  : new MemoryStoreSession({
-      checkPeriod: 86400000 // prune expired entries every 24h
-    });
+// Use PostgreSQL (Supabase) session store in all environments
+const sessionStore = new PgSession({
+  pool: pool, // Use the existing Supabase database pool
+  tableName: 'session', // Table name for sessions
+  createTableIfMissing: true, // Auto-create table if needed
+  pruneSessionInterval: 60 * 15, // Prune expired sessions every 15 minutes
+});
 
-if (process.env.NODE_ENV === 'production') {
-  console.log('✅ Using PostgreSQL session store for production');
-} else {
-  console.log('⚠️ Using MemoryStore for development (sessions will be lost on restart)');
-}
+console.log('✅ Using Supabase PostgreSQL session store (sessions persist across restarts)');
 
 // Enhanced session security configuration
 app.use(session({
